@@ -12,6 +12,10 @@
 </p>
 
 <p align="center">
+  权重：<a href="https://huggingface.co/aimeigaoshou/agent-jev">https://huggingface.co/aimeigaoshou/agent-jev</a>
+</p>
+
+<p align="center">
   <a href="#它做什么">它做什么</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#三种原语">原语</a>
@@ -150,7 +154,7 @@ Laya 已发布权重用了全部 1,200 个官方训练案例。本轮留出 120 
 
 ## 跑起来
 
-权重在 [aimeigaoshou/agent-jev](https://huggingface.co/aimeigaoshou/agent-jev)，是一份 safetensors 状态字典。这个 git 仓库是代码。服务要的是 torch checkpoint，所以先包一层。
+权重在 [https://huggingface.co/aimeigaoshou/agent-jev](https://huggingface.co/aimeigaoshou/agent-jev)，是一份 safetensors 状态字典。这个 git 仓库是代码。服务要的是 torch checkpoint，所以先包一层。
 
 ```bash
 git clone https://github.com/malevrigns/agent-jev.git

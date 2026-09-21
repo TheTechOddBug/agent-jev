@@ -12,6 +12,10 @@
 </p>
 
 <p align="center">
+  Weights: <a href="https://huggingface.co/aimeigaoshou/agent-jev">https://huggingface.co/aimeigaoshou/agent-jev</a>
+</p>
+
+<p align="center">
   <a href="#the-job">The job</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#primitives">Primitives</a>
@@ -150,7 +154,7 @@ Full numbers: [`typed_decisions/comparison.json`](typed_decisions/comparison.jso
 
 ## Run it
 
-The weights are the safetensors state dict at [aimeigaoshou/agent-jev](https://huggingface.co/aimeigaoshou/agent-jev). This git tree has the code. The server still wants a torch checkpoint, so wrap the file once.
+The weights are the safetensors state dict at [https://huggingface.co/aimeigaoshou/agent-jev](https://huggingface.co/aimeigaoshou/agent-jev). This git tree has the code. The server still wants a torch checkpoint, so wrap the file once.
 
 ```bash
 git clone https://github.com/malevrigns/agent-jev.git
