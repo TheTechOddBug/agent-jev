@@ -1,208 +1,351 @@
-# AgentJev-0.6B
-
-[English](README.md) | [简体中文](README_zh.md)
-
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Base Model](https://img.shields.io/badge/Base_Model-Qwen3--0.6B-green.svg)](https://huggingface.co/Qwen/Qwen3-0.6B)
-[![Benchmark](https://img.shields.io/badge/Benchmark-Typed_Decisions_79.25%25-orange.svg)](https://huggingface.co/datasets/LocalLLaMA/typed-decisions)
-[![Latency](https://img.shields.io/badge/Latency-~50--100ms-purple.svg)](#推理性能与时延)
-
-**专为 AI Agent 打造的 0.6B 并行 System One（快速直觉决策）模型：输入任意状态与问题，直接输出经过概率校准的连续分布，零输出 Token 生成。**
-
----
-
-## ⚡ 核心定位与背景
-
-在构建 AI Agent（如代码修复 Agent、运维排障机器人、工作流引擎）时，业界通常使用 27B~70B+ 的大型生成式模型自回归生成数百字来做简单的逻辑分支判断（例如：*“测试全通过了吗？”*、*“下一步该调哪个工具？”*、*“这个操作安全吗？”*）。这种方式存在明显痛点：
-- **时延高**：每个决策步自回归生成 Token 需要数百毫秒甚至数秒；
-- **成本昂贵**：大量 Token 预算白白浪费在单一的布尔值或多选分支上；
-- **易出错**：容易出现格式解析失败（JSON 幻觉）和未校准的置信度。
-
-**AgentJev-0.6B** 旨在充当 Agent 的 **“大脑前额叶 / 快速神经反射弧（System One）”**。输入非结构化的业务状态（代码 Diff、错误堆栈、工单多轮对话、数据表）与结构化决策问题，AgentJev 仅需**单次前向传播（~50ms）**即可输出连续、高保真的概率分布。
-
 <p align="center">
-  <img src="assets/agentjev_reflex_demo.gif" alt="AgentJev 快速直觉反射 vs 传统大模型自回归对比" width="100%" />
+  <img src="assets/hero.png" alt="AgentJev。状态进去，分布出来，不解码任何 token。2,000 道决策上 top-1 为 79.25%，解码 token 为 0，上下文 2,048，三种决策原语。" width="100%">
 </p>
 
----
-
-## 🏆 官方 Benchmark 评测成绩
-
-模型在权威公开基准 **[Typed Decisions Benchmark](https://huggingface.co/datasets/LocalLLaMA/typed-decisions)** (`LocalLLaMA/typed-decisions`) 独立测试集（**400 个全新业务案例，2,000 道结构化决策题**）上进行了全量同题测试：
-
-| 模型 | 模型定位 | Top-1 准确率 | 软交叉熵 (CE) ↓ | Brier 概率误差 ↓ | ECE 校准误差 ↓ | 等级误差 (MAE) ↓ | 单案例平均时延 |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **AgentJev-0.6B (本项目)** | **Specialist** | **79.25%** (1585/2000) | **0.8494** | **0.0448** | 0.1687 | **0.2096** | **~100 ms** |
-| Laya 官方专用微调版 | Specialist | 77.00% (1540/2000) | 0.8844 | 0.0615 | 0.2170 | 0.2423 | ~120 ms |
-| TypeSafe Jev 1.13.0 | Commercial | 72.70% (1454/2000) | — | 0.1480 | 0.1440 | 0.3910 | 710 ms |
-| ModernBERT-base (149M) | Specialist | 64.60% | — | 0.1190 | 0.1790 | 0.4440 | 349 ms |
-| MiniLM-L6 (22M) | Specialist | 58.70% | — | 0.1430 | 0.1080 | 0.5150 | 22 ms |
-| 未微调 Phase 4 基线 | Specialist | 38.70% (774/2000) | 1.2817 | 0.2577 | 0.1050 | 0.7062 | ~100 ms |
-| 标签频率盲猜 (Prior) | Reference | 47.00% | — | 0.1890 | 0.0880 | — | 0 ms |
-| 均匀随机盲猜 (Uniform) | Reference | 30.80% | — | 0.2380 | 0.1690 | — | 0 ms |
-
-> **统计显著性检验**：经 2,000 次 Case 级别的 Bootstrap 重抽样检验，AgentJev-0.6B 相对 Laya 取得 **+2.25% 的净胜优势**，95% 置信区间为 `[+0.60%, +3.80%]`（区间下界严格大于 0，$p < 0.05$）。
-
-### 细分业务领域准确率
-- **发票核销与财务对账** (500 题)：**86.20%** (*Laya: 81.20%*)
-- **客户服务工单分派** (500 题)：**82.20%** (*Laya: 76.40%*)
-- **安全突发事件调查** (500 题)：**76.80%** (*Laya: 77.60%*)
-- **Agent 执行链路观测** (500 题)：**71.80%** (*Laya: 72.80%*)
-
----
-
-## 🌟 核心架构与技术亮点
-
-1. **零 Token 解码（Zero Output Tokens）**
-   - 不进行自回归逐字生成，直接通过打分头与分类头投影输出概率分布。
-2. **2048 Tokens 超大上下文容量**
-   - 相比传统 1024 限制的决策编码器**容量提升一倍**，完整容纳大型 Git Diff、长报错堆栈与多轮客户对话，无截断损失。
-3. **原生共享前缀 KV 复用（Shared Prefix Cache）**
-   - 面临 64 个甚至 255 个候选项时，环境状态只需在骨干网络中前向计算 1 次。实测多候选负载下时延从 **610ms 减半至 299ms**。
-
 <p align="center">
-  <img src="assets/agentjev_shared_prefix.gif" alt="AgentJev 共享前缀 KV 复用加速对比" width="100%" />
+  <a href="README.md"><img alt="English" src="https://img.shields.io/badge/lang-English-111111?style=flat-square"></a>
+  <a href="LICENSE"><img alt="Apache-2.0" src="https://img.shields.io/badge/license-Apache_2.0-111111?style=flat-square"></a>
+  <a href="https://huggingface.co/Qwen/Qwen3-0.6B"><img alt="Qwen3-0.6B" src="https://img.shields.io/badge/backbone-Qwen3--0.6B-111111?style=flat-square"></a>
+  <a href="https://huggingface.co/datasets/LocalLLaMA/typed-decisions"><img alt="Typed Decisions" src="https://img.shields.io/badge/eval-Typed_Decisions-111111?style=flat-square"></a>
+  <img alt="解码 token 为 0" src="https://img.shields.io/badge/decoded_tokens-0-C6A36A?style=flat-square">
 </p>
 
-4. **三种标准决策原语支持**：
-   - **`Boolean`**：命题真假判定（支持自定义 True/False 语义准则）。
-   - **`Choice`**：支持 2~255 个动态候选项的多项选择。
-   - **`Score`**：支持 2~10 级有序等级评分，并返回连续期望得分 $\sum (i \times P_i)$。
+<p align="center">
+  <a href="#它做什么">它做什么</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#三种原语">原语</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#一次前向">一次前向</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#typed-decisions">结果</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#跑起来">跑起来</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#http">HTTP</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#仓库">仓库</a>
+</p>
+
+AgentJev-0.6B 不写句子。你给它一段状态，和已经写好的问题。一次前向返回每个选项的概率。解码出的 token 数是 0。
+
+它适合放在 Agent 循环里做门控、路由和评分。解释错误、改代码、起草回复，仍然交给更大的模型。
 
 ---
 
-## 🚀 快速上手
+## 它做什么
 
-### 1. 环境准备
+写代码的 Agent、分派工单的机器人、工作流引擎，大部分步骤其实不是写作题。测试过了没有。下一步调哪个工具。这条命令能不能执行。常见做法是让 27B–70B 的模型把一个布尔值说成一段话，再去解析这段话。
+
+| | 拿写作者当开关 | AgentJev |
+| --- | --- | --- |
+| 输出 | 你希望它是 JSON 的文本 | 你给定选项上的分布 |
+| 解码 | 一个 token 接一个 token | 没有 |
+| 失败方式 | 格式坏了，或者一句很确定的空话 | 一个可以设阈值的概率 |
+| 在循环里的位置 | 占掉一整轮 | 写作者脚下的那一下反射 |
+
+<p align="center">
+  <img src="assets/agentjev_reflex_demo.gif" alt="同一段状态上，AgentJev 直接给出分布，对照逐 token 把决定写出来的模型。" width="100%">
+  <br>
+  <sub>状态保持非结构化。问题是有类型的。答案是分布。</sub>
+</p>
+
+状态可以是 diff、堆栈、工单线程或一张表。对象会按稳定 JSON 送进去。问题的 id 只用来对上响应，不会进入模型。含义必须写在问题和选项正文里。
+
+---
+
+## 三种原语
+
+三种形状。每一种都返回完整分布，不只返回胜出的那一项。
+
+| | Boolean | Choice | Score |
+| --- | --- | --- | --- |
+| 问的是 | 一个命题 | 就这些选项而言，选哪一个 | 落在这条有序量尺的哪里 |
+| 你传入 | 可选的 true / false 准则 | 2–255 个选项，每项一段描述，列表或映射都可以 | 2–10 级描述，从低到高 |
+| 你拿回 | `value`、为真的概率、两侧质量 | `value`、`top_probability`、`margin`、完整分布 | `level`（最大概率的下标），`score` = Σ i · Pᵢ |
+
+`margin` 是第一名和第二名的差。Choice 是给定集合内部的相对偏好，不是这个动作独立的成功概率。若要后者，对每个动作单独问一个 Boolean，再用你自己的结果做校准。
+
+---
+
+## 一次前向
+
+骨干是去掉语言模型头的 Qwen3-0.6B。每个候选项读它最后一个 token 的隐状态。一个与排列等变的小头再给整组打分：选项的书写顺序不会偷偷变成名次。Softmax 按问题做。
+
+```mermaid
+flowchart LR
+  state["状态"] --> enc["Qwen3-0.6B"]
+  questions["Boolean · Choice · Score"] --> enc
+  enc --> head["候选头"]
+  head --> dist["分布"]
+```
+
+三件事是实现，不是口号。
+
+**没有解码。** 隐状态直接变成 logits。没有输出词表这一步，也就没有待修补的 JSON。
+
+**上下文 2,048 tokens。超长会拒绝，不会静默截断。** 装不下的 diff 或堆栈是一次错误，不会悄悄切掉问题或某个候选项。
+
+**同一问题的候选共享前缀。** 在一份固定负载上——64 个 Choice 选项加 1 个 Boolean，共 66 条路径、33,547 个路径 token——不共享时中位数 **609.65 ms**，共享前缀 **298.91 ms**。概率最大绝对差 **0.000508**，选中的选项没有变。两边生成的 token 都是 0。这是这份负载、预热之后的测量，不是对所有输入的承诺。
+
+<p align="center">
+  <img src="assets/agentjev_shared_prefix.gif" alt="共享前缀：状态只编码一次，多个候选项从同一前缀分出。" width="100%">
+  <br>
+  <sub>状态编码一次。候选项从这条前缀上分出去。</sub>
+</p>
+
+不同问题之间还不共享状态缓存。训练代码里留了树编码器的接口。上面测到的是共享前缀这条推理路径，不是那个接口。
+
+---
+
+## Typed Decisions
+
+[Typed Decisions](https://huggingface.co/datasets/LocalLLaMA/typed-decisions) 官方测试集：**400 个案例，2,000 道题**。每个案例一段状态、五道题，四个工作流。准确率是和公开教师分布的最大概率项是否一致，不是 Coding Agent 的真实成功率。
+
+| 模型 | 性质 | Top-1 | 软交叉熵 ↓ | Brier ↓ | ECE ↓ | 等级误差 ↓ |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| **AgentJev-0.6B，本轮** | 专用模型 | **79.25%** · 1585/2000 | **0.8494** | **0.0448** | 0.1687 | **0.2096** |
+| Laya 已发布权重 | 专用模型 | 77.00% · 1540/2000 | 0.8844 | 0.0615 | 0.2170 | 0.2423 |
+| TypeSafe Jev 1.13.0 | 通用模型，零样本 | 72.7% | — | 0.148 | 0.144 | 0.391 |
+| ModernBERT-base，149M | 专用模型 | 64.6% | — | 0.119 | 0.179 | 0.444 |
+| MiniLM-L6，22M | 专用模型 | 58.7% | — | 0.143 | 0.108 | 0.515 |
+| AgentJev phase 4，本轮之前 | 专用模型 | 38.70% · 774/2000 | 1.2817 | 0.2577 | 0.1050 | 0.7062 |
+| 标签频率 Prior | 参照 | 47.0% | — | 0.189 | 0.088 | — |
+| 均匀分布 | 参照 | 30.8% | — | 0.238 | 0.169 | — |
+
+没有软交叉熵的几行，抄自数据集卡片，本仓库没有重测。那张卡片也不公布软交叉熵。这几行的 Brier、ECE、等级误差沿用卡片自己的定义。
+
+相对 Laya，这份测试集上的准确率差是 **+2.25 个百分点**。按 400 个案例做 bootstrap，95% 区间 **[+0.65, +3.90]**。相对本轮的起点 phase 4，差距是 **+40.55 个百分点**，区间 **[+37.35, +43.50]**。
+
+### 按工作流
+
+每个工作流 500 题。AgentJev 用的是校准后的权重。Laya 与上表是同一个已发布专用权重。
+
+| 工作流 | AgentJev | Laya |
+| --- | ---: | ---: |
+| 发票处理 | **86.20%** | 81.20% |
+| 客户服务 | **82.20%** | 76.40% |
+| 安全事件 | 76.80% | **77.60%** |
+| Agent 轨迹观测 | 71.80% | **72.80%** |
+
+### 按原语
+
+| 原语 | 题数 | Top-1 | 软交叉熵 |
+| --- | ---: | ---: | ---: |
+| Boolean | 600 | 88.83% | 0.4935 |
+| Choice | 600 | 75.33% | 0.9767 |
+| Score | 800 | 75.00% | 1.0209 |
+
+### 这张表怎么读
+
+专用模型和通用模型不是同一种测量。数据集卡片写了这一点，表里也标了。Jev 1.13.0 是零样本答这些题。AgentJev、Laya、ModernBERT、MiniLM 都在这个基准上拟合过。
+
+Laya 已发布权重用了全部 1,200 个官方训练案例。本轮留出 120 个开发案例和 120 个校准案例，按开发集软交叉熵选出第 600 步，**然后**才打开测试集。温度是每种原语一个正标量，只在校准集上拟合。损失是软交叉熵加上 0.1 倍的候选求和 Brier。种子 `20260921`。数据版本 `ea9306458d6e9563628369a3d1e72e362fb381d2`。
+
+标签是教师分布，里面有合成案例。在这里赢下一行，不等于拉取请求合并了、事件被遏制了、或者发票付出去了。
+
+完整数字：[`typed_decisions/comparison.json`](typed_decisions/comparison.json)、[`typed_decisions/protocol.json`](typed_decisions/protocol.json)、[`typed_decisions/REPORT_zh.md`](typed_decisions/REPORT_zh.md)。
+
+---
+
+## 跑起来
+
+权重不在 git 里。需要本地的 AgentJev checkpoint，以及它训练时用的那份 Qwen3-0.6B 目录。
 
 ```bash
-git clone https://github.com/your-org/AgentJev.git
-cd AgentJev
+git clone https://github.com/malevrigns/agent-jev.git
+cd agent-jev
+python -m venv .venv
 pip install -r requirements.txt
+
+python -m jev_service.server \
+  --checkpoint /path/to/agentjev_v1.pt \
+  --model-path /path/to/Qwen3-0.6B \
+  --port 8149
 ```
 
-### 2. 启动本地决策推理服务
+进程只绑 **127.0.0.1**。工作台在 [http://127.0.0.1:8149/](http://127.0.0.1:8149/)。`GET /health` 和 `GET /api/info` 返回当前加载的权重。上表对应的是第 600 步选出的 checkpoint。
 
-```bash
-python -m jev_service.server --checkpoint checkpoints/agentjev_v1/best.pt --port 8149
-```
-
-服务启动后，浏览器访问 `http://127.0.0.1:8149/` 即可直接打开可视化交互工作台。
+`--temperatures` 传入在留出校准集上拟合的标量。`--page` 替换工作台页面。`--device` 默认 `cuda:0`。`--max-tokens` 默认 2048。
 
 ---
 
-## 💻 Python Client SDK 使用示例
+## 客户端
 
-使用官方提供的 Python 客户端 SDK（`agentjev_client.py`），无缝嵌入现有的 Agent 循环中：
+`agentjev_client.py` 对这个服务说话。除标准库外没有额外依赖。
 
 ```python
 from agentjev_client import AgentJev
 
-# 初始化连接
 jev = AgentJev("http://127.0.0.1:8149")
 
-# 1. 布尔门控：单测是否全部通过？
 state = {
-    "task": "修复 UserAuthService 的空指针异常",
-    "test_output": "Tests run: 14, Failures: 1, Errors: 0. 失败用例: test_expired_token"
+    "task": "修复 UserAuthService.verifyToken 的空指针",
+    "test_output": "Tests run: 14, Failures: 1 — test_expired_token",
 }
 
-is_done = jev.decide_boolean(
-    state=state,
-    question="当前任务是否已彻底修复并可安全提交 PR？",
+gate = jev.decide_boolean(
+    state,
+    "测试是否已经全部通过？",
     criteria={
-        "true": "所有单元测试通过且编译无误。",
-        "false": "仍有失败测试或未满足的需求。"
-    }
+        "true": "测试全绿，并且项目可以构建。",
+        "false": "仍有失败的测试。",
+    },
 )
-print("允许提交 PR 吗?:", is_done["decision"])
-# 输出: 允许提交 PR 吗?: False (未完成置信度: 58.04%)
 
-# 2. 动态多选：下一步最佳动作？
-next_action = jev.decide_choice(
-    state=state,
-    question="Coding Agent 下一步最合理的动作是什么？",
+route = jev.decide_choice(
+    state,
+    "Agent 下一步应该做什么？",
     options={
-        "read_failed_test": "查看失败测试用例的源码，确认它期望捕获什么异常。",
-        "rewrite_entire_file": "要求大模型推倒重写整个服务文件。",
-        "force_commit": "忽略失败测试，强行合并代码。",
-        "blind_retry": "不改代码直接重跑单测。"
-    }
+        "read_failed_test": "打开 test_expired_token，读断言。",
+        "rewrite_file": "让更大的模型重写这个服务。",
+        "commit": "不管失败，提交当前 diff。",
+        "retry": "不改代码，把测试再跑一遍。",
+    },
 )
-print("推荐动作:", next_action["best_action"])
-print("置信优势 Margin:", next_action["margin"])
-# 输出: 推荐动作: read_failed_test (概率: 54.3%, Margin: +37.1%)
 
-# 3. 有序等级评分：评估代码改动风险
 risk = jev.score(
-    state=state,
-    question="评估该代码变更对生产环境的回归风险等级：",
+    state,
+    "这次改动的运行风险在哪一级？",
     levels=[
-        "Level 0: 隔离修改，零外部影响。",
-        "Level 1: 轻度风险，单测断言小幅变更。",
-        "Level 2: 中度风险，涉及 API 签名变更。",
-        "Level 3: 高危风险，可能破坏鉴权一致性。"
-    ]
+        "隔离修改，没有外部行为变化。",
+        "一条单元断言挪动了。",
+        "公开签名变了。",
+        "鉴权行为可能被绕过。",
+    ],
 )
-print(f"风险评级: {risk['level']} (期望分值: {risk['expected_score']:.2f} / 3.0)")
-# 输出: 风险评级: 1 (期望分值: 1.54 / 3.0)
 ```
+
+`gate` 里有 `decision`、`prob_true`、`prob_false`、`confidence`、`wall_ms`。
+`route` 里有 `best_action`、`probability`、`margin`、`distribution`。
+`risk` 里有 `level` 和 `expected_score`。
+
+同一段状态要问好几题时，用 `evaluate(state, questions)`。多段状态放在 HTTP 体的 `requests` 里，最多 32 段。
+
+下面三个脚本假定 8149 上已经有服务：
+
+```bash
+python run_practical_test.py
+python test_coding_scenarios.py
+python test_game_suite.py
+```
+
+前两个走软件工程场景。第三个走客服、迷宫、贪吃蛇和 ViZDoom 形态的决策。它们是对着活服务的演示，不是离线单测。
 
 ---
 
-## 📡 HTTP 接口规范
-
-AgentJev 暴露标准 REST 接口：
+## HTTP
 
 `POST /api/evaluate`
 
 ```json
 {
-  "state": "当前代码修改完毕，单测运行：23 个通过，1 个失败。",
+  "state": "23 个测试通过，1 个失败。",
   "questions": [
     {
-      "id": "is_completed",
+      "id": "done",
       "type": "boolean",
-      "question": "测试是否已全部通过？"
+      "question": "测试是否已经全部通过？",
+      "criteria": {
+        "true": "测试全绿。",
+        "false": "至少有一个测试失败。"
+      }
     },
     {
-      "id": "next_step",
+      "id": "next",
       "type": "choice",
-      "question": "下一步应该采取什么动作？",
+      "question": "下一步做什么更有用？",
       "options": {
-        "debug_failure": "查看失败断言的具体实现。",
-        "submit_patch": "直接提交代码。"
+        "debug_failure": "读失败的断言。",
+        "submit_patch": "现在就开拉取请求。"
       }
     }
   ]
 }
 ```
 
+```json
+{
+  "api_version": "agentjev.decision.v1",
+  "results": [
+    {
+      "id": "0",
+      "answers": [
+        {
+          "id": "done",
+          "type": "boolean",
+          "probability": 0.08,
+          "value": false,
+          "distribution": { "true": 0.08, "false": 0.92 }
+        },
+        {
+          "id": "next",
+          "type": "choice",
+          "value": "debug_failure",
+          "top_probability": 0.87,
+          "margin": 0.74,
+          "distribution": { "debug_failure": 0.87, "submit_patch": 0.13 }
+        }
+      ]
+    }
+  ],
+  "usage": { "generated_tokens": 0 }
+}
+```
+
+上面的概率只说明字段形状。Score 的答案会多出 `score`、`level` 和 `legend`。批量写成 `{"requests": [{"id", "state", "questions"}, ...]}`。单次上限：32 段状态、128 道题、1,024 条候选路径，请求体 1 到 1,000,000 字节。同一题里的候选描述不能重复。
+
 ---
 
-## 🎯 典型实战落地场景
+## 工具前面的一道门
 
-- **Claude Code 与开发环境实时门控**：作为 `PreToolUse` 钩子运行，在终端执行高危命令（如 `rm`、强制推送、越权访问）或保存代码前进行毫秒级拦截与风险审查。
+`agentjev_hook.py` 是 Claude Code 的 `PreToolUse` 命令钩子，覆盖 Bash、Write、Edit。它把工具载荷发到 `http://127.0.0.1:8149/api/evaluate`，问一个 Boolean 和一个四级 Score，再打印决定。
+
+只有评分到第 3 级 **并且** Boolean 认为不安全时，才会拦住。服务没有应答时钩子以 0 退出，工具继续执行。把钩子指到这个脚本，服务保持在 8149。地址写死在文件里。
 
 <p align="center">
-  <img src="assets/agentjev_gating_hook.gif" alt="AgentJev 实时安全门控" width="100%" />
+  <img src="assets/agentjev_gating_hook.gif" alt="工具调用执行前，AgentJev 先给这次调用打分。" width="100%">
+  <br>
+  <sub>钩子判断这一次调用。它不代替那个写补丁的 Agent。</sub>
 </p>
 
-- **Coding Agent 动作路由与单测门禁**：瞬时判定测试是否通过并指导下一步查看错误断言或重试，节省 70%+ 的 Agent 循环 Token 成本。
-- **客户工单意图识别与退款分派**：快速分类用户诉求，评估流失风险，并分派至对应专员。
-- **财务发票与订单核销**：检测明细金额与交货单差异，防范重复开票。
+`assets/decision_arena.html` 可以在浏览器里直接打开，它是静态页面。8149 上的页面才是绑在当前权重上的工作台。
 
 ---
 
-## 🛡️ 数据集防泄露与实验卫生
+## 留出了什么
 
-所有训练与验证严格遵守学术防泄露规范：
-- **案例级彻底物理隔离**：官方 1,200 个训练案例与 400 个测试案例完全按 Case ID 和状态哈希做排他切分，两集交集严格为 0；
-- **测试集严格封存**：测试集在第 600 步选定最优模型之前从未被读取，未参与任何超参调试或早停监控；
-- **去标签化**：输入文本严格剥离了任何目标标签、黄金答案与内部任务标记。
+训练案例和 400 个测试案例按案例 id 切开。一个案例的所有问题留在同一个分割里。factors、金标和案例 id 都不进入模型输入。测试集没有参与选 checkpoint，也没有参与拟合温度。
+
+这是这个基准上的卫生，不是对其他数据集的声明。
 
 ---
 
-## 📜 开源协议
+## 仓库
 
-本项目基于 [Apache-2.0](LICENSE) 开源协议发布。
+| 路径 | 是什么 |
+| --- | --- |
+| `agentjev/` | 骨干、候选头、损失、训练入口 |
+| `jev_service/` | 本机服务、契约、前缀运行时、工作台 |
+| `agentjev_client.py` | Python 客户端 |
+| `agentjev_hook.py` | PreToolUse 门控 |
+| `typed_decisions/` | 协议、对照数字、逐题预测 |
+| `assets/` | 头图、动图、静态页面 |
+| `run_practical_test.py`、`test_coding_scenarios.py`、`test_game_suite.py` | 对着活服务的演示 |
+
+服务侧容易漏掉的说明在 [`jev_service/README.md`](jev_service/README.md)。
+
+---
+
+## 引用
+
+```bibtex
+@misc{agentjev2026,
+  title        = {AgentJev: A 0.6B System One Decision Model},
+  author       = {malevrigns},
+  year         = {2026},
+  howpublished = {\url{https://github.com/malevrigns/agent-jev}},
+  license      = {Apache-2.0}
+}
+```
+
+Apache-2.0。见 [LICENSE](LICENSE)。
