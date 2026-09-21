@@ -21,7 +21,7 @@
 **AgentJev-0.6B** 旨在充当 Agent 的 **“大脑前额叶 / 快速神经反射弧（System One）”**。输入非结构化的业务状态（代码 Diff、错误堆栈、工单多轮对话、数据表）与结构化决策问题，AgentJev 仅需**单次前向传播（~50ms）**即可输出连续、高保真的概率分布。
 
 <p align="center">
-  <img src="agentjev_reflex_demo.gif" alt="AgentJev 快速直觉反射 vs 传统大模型自回归对比" width="100%" />
+  <img src="assets/agentjev_reflex_demo.gif" alt="AgentJev 快速直觉反射 vs 传统大模型自回归对比" width="100%" />
 </p>
 
 ---
@@ -61,7 +61,7 @@
    - 面临 64 个甚至 255 个候选项时，环境状态只需在骨干网络中前向计算 1 次。实测多候选负载下时延从 **610ms 减半至 299ms**。
 
 <p align="center">
-  <img src="agentjev_shared_prefix.gif" alt="AgentJev 共享前缀 KV 复用加速对比" width="100%" />
+  <img src="assets/agentjev_shared_prefix.gif" alt="AgentJev 共享前缀 KV 复用加速对比" width="100%" />
 </p>
 
 4. **三种标准决策原语支持**：
@@ -185,7 +185,7 @@ AgentJev 暴露标准 REST 接口：
 - **Claude Code 与开发环境实时门控**：作为 `PreToolUse` 钩子运行，在终端执行高危命令（如 `rm`、强制推送、越权访问）或保存代码前进行毫秒级拦截与风险审查。
 
 <p align="center">
-  <img src="agentjev_gating_hook.gif" alt="AgentJev 实时安全门控" width="100%" />
+  <img src="assets/agentjev_gating_hook.gif" alt="AgentJev 实时安全门控" width="100%" />
 </p>
 
 - **Coding Agent 动作路由与单测门禁**：瞬时判定测试是否通过并指导下一步查看错误断言或重试，节省 70%+ 的 Agent 循环 Token 成本。

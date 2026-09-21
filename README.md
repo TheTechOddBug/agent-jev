@@ -37,7 +37,7 @@ When building AI Agents (Coding Agents, DevOps triage, workflow orchestrators), 
 **AgentJev-0.6B** serves as the **fast, reflex-driven "System One" decision brain** for your agents. Given any arbitrary unstructured state (code diff, stack trace, conversation log, table) and structured questions, AgentJev computes **calibrated, continuous probability distributions in a single forward pass (~50ms)**.
 
 <p align="center">
-  <img src="agentjev_reflex_demo.gif" alt="AgentJev Fast Reflex vs Standard Autoregression" width="100%" />
+  <img src="assets/agentjev_reflex_demo.gif" alt="AgentJev Fast Reflex vs Standard Autoregression" width="100%" />
 </p>
 
 ---
@@ -77,7 +77,7 @@ Evaluated on the official **[Typed Decisions Benchmark](https://huggingface.co/d
    - Reuses state token representations across tens or hundreds of candidate actions. Evaluating 64 candidate options drops from **610ms to 299ms (2x speedup)**.
 
 <p align="center">
-  <img src="agentjev_shared_prefix.gif" alt="AgentJev Shared Prefix KV Caching Acceleration" width="100%" />
+  <img src="assets/agentjev_shared_prefix.gif" alt="AgentJev Shared Prefix KV Caching Acceleration" width="100%" />
 </p>
 
 4. **Three Core System One Primitives**:
@@ -236,7 +236,7 @@ AgentJev provides a lightweight, batch-capable REST endpoint:
 - **Claude Code & Dev Tools Hook**: Pluggable as a `PreToolUse` safety gate to intercept destructive bash commands (`rm`, force push) and inspect code security in real time.
 
 <p align="center">
-  <img src="agentjev_gating_hook.gif" alt="AgentJev Real-Time Tool Gating" width="100%" />
+  <img src="assets/agentjev_gating_hook.gif" alt="AgentJev Real-Time Tool Gating" width="100%" />
 </p>
 
 - **Customer Support Triage**: Classify intent, predict churn risk, and route complex complaints to specialized human queues.
