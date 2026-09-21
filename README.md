@@ -5,6 +5,7 @@
 <p align="center">
   <a href="README_zh.md"><img alt="简体中文" src="https://img.shields.io/badge/lang-简体中文-111111?style=flat-square"></a>
   <a href="LICENSE"><img alt="Apache-2.0" src="https://img.shields.io/badge/license-Apache_2.0-111111?style=flat-square"></a>
+  <a href="https://huggingface.co/aimeigaoshou/agent-jev"><img alt="Weights on Hugging Face" src="https://img.shields.io/badge/weights-Hugging_Face-C6A36A?style=flat-square"></a>
   <a href="https://huggingface.co/Qwen/Qwen3-0.6B"><img alt="Qwen3-0.6B" src="https://img.shields.io/badge/backbone-Qwen3--0.6B-111111?style=flat-square"></a>
   <a href="https://huggingface.co/datasets/LocalLLaMA/typed-decisions"><img alt="Typed Decisions" src="https://img.shields.io/badge/eval-Typed_Decisions-111111?style=flat-square"></a>
   <img alt="Zero decoded tokens" src="https://img.shields.io/badge/decoded_tokens-0-C6A36A?style=flat-square">
@@ -149,21 +150,37 @@ Full numbers: [`typed_decisions/comparison.json`](typed_decisions/comparison.jso
 
 ## Run it
 
-Weights are not in the git tree. You need a local AgentJev checkpoint and the Qwen3-0.6B directory it was trained against.
+The weights are the safetensors state dict at [aimeigaoshou/agent-jev](https://huggingface.co/aimeigaoshou/agent-jev). This git tree has the code. The server still wants a torch checkpoint, so wrap the file once.
 
 ```bash
 git clone https://github.com/malevrigns/agent-jev.git
 cd agent-jev
 python -m venv .venv
 pip install -r requirements.txt
+pip install huggingface_hub safetensors
+```
 
+```python
+from huggingface_hub import hf_hub_download
+from safetensors.torch import load_file
+import torch
+
+src = hf_hub_download("aimeigaoshou/agent-jev", "model.safetensors")
+torch.save({"state_dict": load_file(src)}, "agentjev_v1.pt")
+hf_hub_download("aimeigaoshou/agent-jev", "temperatures.json", local_dir=".")
+```
+
+```bash
 python -m jev_service.server \
-  --checkpoint /path/to/agentjev_v1.pt \
-  --model-path /path/to/Qwen3-0.6B \
+  --checkpoint agentjev_v1.pt \
+  --model-path Qwen/Qwen3-0.6B \
+  --temperatures temperatures.json \
   --port 8149
 ```
 
-The process binds **127.0.0.1** only. The workbench is [http://127.0.0.1:8149/](http://127.0.0.1:8149/). `GET /health` and `GET /api/info` return the loaded checkpoint. The benchmark checkpoint selected for the table above was step 600.
+`model.safetensors` is the full module, backbone plus candidate head. It is not a causal language model, and `AutoModelForCausalLM` will not load it. `AgentJevModel` builds the Qwen3 skeleton, then `load_state_dict(..., strict=True)` replaces it. Use `dtype=torch.bfloat16` for that load. The tensors are bf16.
+
+The process binds **127.0.0.1** only. The workbench is [http://127.0.0.1:8149/](http://127.0.0.1:8149/). `GET /health` and `GET /api/info` return the loaded checkpoint. The benchmark checkpoint selected for the table above was step 600. These published tensors are that run.
 
 `--temperatures` takes scalars fit on held-out calibration cases. `--page` swaps the workbench HTML. `--device` defaults to `cuda:0`. `--max-tokens` defaults to 2048.
 

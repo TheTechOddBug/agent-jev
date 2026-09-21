@@ -5,6 +5,7 @@
 <p align="center">
   <a href="README.md"><img alt="English" src="https://img.shields.io/badge/lang-English-111111?style=flat-square"></a>
   <a href="LICENSE"><img alt="Apache-2.0" src="https://img.shields.io/badge/license-Apache_2.0-111111?style=flat-square"></a>
+  <a href="https://huggingface.co/aimeigaoshou/agent-jev"><img alt="Hugging Face 权重" src="https://img.shields.io/badge/weights-Hugging_Face-C6A36A?style=flat-square"></a>
   <a href="https://huggingface.co/Qwen/Qwen3-0.6B"><img alt="Qwen3-0.6B" src="https://img.shields.io/badge/backbone-Qwen3--0.6B-111111?style=flat-square"></a>
   <a href="https://huggingface.co/datasets/LocalLLaMA/typed-decisions"><img alt="Typed Decisions" src="https://img.shields.io/badge/eval-Typed_Decisions-111111?style=flat-square"></a>
   <img alt="解码 token 为 0" src="https://img.shields.io/badge/decoded_tokens-0-C6A36A?style=flat-square">
@@ -149,21 +150,37 @@ Laya 已发布权重用了全部 1,200 个官方训练案例。本轮留出 120 
 
 ## 跑起来
 
-权重不在 git 里。需要本地的 AgentJev checkpoint，以及它训练时用的那份 Qwen3-0.6B 目录。
+权重在 [aimeigaoshou/agent-jev](https://huggingface.co/aimeigaoshou/agent-jev)，是一份 safetensors 状态字典。这个 git 仓库是代码。服务要的是 torch checkpoint，所以先包一层。
 
 ```bash
 git clone https://github.com/malevrigns/agent-jev.git
 cd agent-jev
 python -m venv .venv
 pip install -r requirements.txt
+pip install huggingface_hub safetensors
+```
 
+```python
+from huggingface_hub import hf_hub_download
+from safetensors.torch import load_file
+import torch
+
+src = hf_hub_download("aimeigaoshou/agent-jev", "model.safetensors")
+torch.save({"state_dict": load_file(src)}, "agentjev_v1.pt")
+hf_hub_download("aimeigaoshou/agent-jev", "temperatures.json", local_dir=".")
+```
+
+```bash
 python -m jev_service.server \
-  --checkpoint /path/to/agentjev_v1.pt \
-  --model-path /path/to/Qwen3-0.6B \
+  --checkpoint agentjev_v1.pt \
+  --model-path Qwen/Qwen3-0.6B \
+  --temperatures temperatures.json \
   --port 8149
 ```
 
-进程只绑 **127.0.0.1**。工作台在 [http://127.0.0.1:8149/](http://127.0.0.1:8149/)。`GET /health` 和 `GET /api/info` 返回当前加载的权重。上表对应的是第 600 步选出的 checkpoint。
+`model.safetensors` 是完整模块：骨干加上候选头。它不是因果语言模型，`AutoModelForCausalLM` 加载不了。`AgentJevModel` 先搭好 Qwen3 骨架，再用 `load_state_dict(..., strict=True)` 盖掉。加载时用 `dtype=torch.bfloat16`，张量就是这个精度。
+
+进程只绑 **127.0.0.1**。工作台在 [http://127.0.0.1:8149/](http://127.0.0.1:8149/)。`GET /health` 和 `GET /api/info` 返回当前加载的权重。上表对应的是第 600 步选出的 checkpoint。这次公开的张量就是那一轮。
 
 `--temperatures` 传入在留出校准集上拟合的标量。`--page` 替换工作台页面。`--device` 默认 `cuda:0`。`--max-tokens` 默认 2048。
 
