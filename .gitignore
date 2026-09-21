@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Model checkpoints & large weights (>100MB)
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+checkpoints/
+runs/
+models/
+laya_model/
+laya_runtime/
+agentjev_v1/
+
+# Large Datasets & Archives
+*.parquet
+*.zip
+*.tar.gz
+data/
+prepared/
+
+# Logs & temporary files
+*.log
+*.tmp
+*.swp
+*.bak
+*.output
+
+# Environments
+.env
+.venv/
+env/
+venv/
+
+# Claude & OS metadata
+.claude/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,154 @@
+{
+  "status": "passed",
+  "completion_counterfactual": {
+    "failing_p_true": 2.014569145103451e-05,
+    "passing_p_true": 0.999841570854187
+  },
+  "permutation_max_absolute_error": 0.0,
+  "question_isolation_max_absolute_error": 0.002818584442138672,
+  "choice_255_candidates": true,
+  "long_input_rejected": true,
+  "responses": {
+    "completion": {
+      "api_version": "agentjev.decision.v1",
+      "model": "phase4",
+      "results": [
+        {
+          "id": "0",
+          "answers": [
+            {
+              "id": "completion",
+              "type": "boolean",
+              "distribution": {
+                "true": 2.014569145103451e-05,
+                "false": 0.9999798536300659
+              },
+              "probability": 2.014569145103451e-05,
+              "value": false
+            }
+          ]
+        },
+        {
+          "id": "1",
+          "answers": [
+            {
+              "id": "completion",
+              "type": "boolean",
+              "distribution": {
+                "true": 0.999841570854187,
+                "false": 0.00015843621804378927
+              },
+              "probability": 0.999841570854187,
+              "value": true
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "questions": 2,
+        "candidate_paths": 4,
+        "input_path_tokens": 254,
+        "generated_tokens": 0,
+        "truncated_inputs": 0,
+        "backbone_input_tokens": 254,
+        "shared_prefix_questions": 0,
+        "wall_ms": 2440.79
+      }
+    },
+    "choice": {
+      "api_version": "agentjev.decision.v1",
+      "model": "phase4",
+      "results": [
+        {
+          "id": "0",
+          "answers": [
+            {
+              "id": "pick",
+              "type": "choice",
+              "distribution": {
+                "pass": 0.7617543339729309,
+                "fail": 0.11912286281585693,
+                "unknown": 0.11912286281585693
+              },
+              "value": "pass",
+              "description": "All required tests pass.",
+              "top_probability": 0.7617543339729309,
+              "margin": 0.642631471157074
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "questions": 1,
+        "candidate_paths": 3,
+        "input_path_tokens": 106,
+        "generated_tokens": 0,
+        "truncated_inputs": 0,
+        "backbone_input_tokens": 106,
+        "shared_prefix_questions": 0,
+        "wall_ms": 51.58
+      }
+    },
+    "mixed_question_types": {
+      "api_version": "agentjev.decision.v1",
+      "model": "phase4",
+      "results": [
+        {
+          "id": "0",
+          "answers": [
+            {
+              "id": "pick",
+              "type": "choice",
+              "distribution": {
+                "pass": 0.7645729184150696,
+                "fail": 0.11679393798112869,
+                "unknown": 0.11863316595554352
+              },
+              "value": "pass",
+              "description": "All required tests pass.",
+              "top_probability": 0.7645729184150696,
+              "margin": 0.6459397524595261
+            },
+            {
+              "id": "extra",
+              "type": "score",
+              "distribution": {
+                "0": 0.09739620983600616,
+                "1": 0.1716046929359436,
+                "2": 0.7309991121292114
+              },
+              "score": 1.6336029171943665,
+              "level": 2,
+              "legend": [
+                "No solution exists.",
+                "Work is in progress.",
+                "All required tests pass."
+              ]
+            }
+          ]
+        }
+      ],
+      "usage": {
+        "questions": 2,
+        "candidate_paths": 6,
+        "input_path_tokens": 210,
+        "generated_tokens": 0,
+        "truncated_inputs": 0,
+        "backbone_input_tokens": 210,
+        "shared_prefix_questions": 0,
+        "wall_ms": 50.58
+      }
+    },
+    "large_choice_usage": {
+      "questions": 1,
+      "candidate_paths": 255,
+      "input_path_tokens": 10090,
+      "generated_tokens": 0,
+      "truncated_inputs": 0,
+      "backbone_input_tokens": 10090,
+      "shared_prefix_questions": 0,
+      "wall_ms": 684.33
+    }
+  },
+  "scope": "HTTP/model integration and controlled smoke tests; not a general capability benchmark"
+}

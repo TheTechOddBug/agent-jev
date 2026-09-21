@@ -1,0 +1,23 @@
+{
+  "experiment": "agentjev_typed_v1",
+  "dataset": "LocalLLaMA/typed-decisions",
+  "dataset_revision": "ea9306458d6e9563628369a3d1e72e362fb381d2",
+  "laya_checkpoint": "convaiinnovations/laya-typed-decisions",
+  "laya_revision": "f9ab0b228f0fc0f14d873dbc99038f135c2da1b2",
+  "initial_checkpoint": "/root/agentjev/runs/phase4/final.pt",
+  "seed": 20260921,
+  "max_steps": 600,
+  "microbatch_questions": 4,
+  "gradient_accumulation": 4,
+  "backbone_lr": 0.00001,
+  "head_lr": 0.0001,
+  "loss": "soft cross entropy + 0.1 * sum-candidate Brier",
+  "selection": "minimum uncalibrated development soft cross entropy every 100 steps, including initialization",
+  "calibration": "positive scalar temperature per primitive, fitted only on separate calibration cases",
+  "official_test": "400 cases, 2000 decisions; no training, early stopping or temperature fitting",
+  "limitations": [
+    "Targets are public teacher distributions, not empirical outcome probabilities.",
+    "Published Laya checkpoint trained on all 1200 source training cases; our training reserves 120 dev and 120 calibration cases.",
+    "No same-budget architecture claim; this compares actual checkpoints on identical cases."
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "selection": {
+    "best_step": 600,
+    "dev_soft_cross_entropy": 0.8145090786643086,
+    "checkpoint": "/root/agentjev/typed_decisions/agentjev_v1/best.pt",
+    "selection_completed_before_test": true,
+    "training_seconds": 841.1619654577225
+  },
+  "phase4": {
+    "overall": {
+      "n": 2000,
+      "accuracy": 0.387,
+      "soft_cross_entropy": 1.281724447772559,
+      "brier_sum": 0.2576556567251389,
+      "gold_mass_at_selected_option": 0.38515121049433987,
+      "ece_10_bins_vs_gold_argmax": 0.10499638699030682,
+      "score_expectation_mae": 0.7062007060183633
+    },
+    "by_type": {
+      "boolean": {
+        "n": 600,
+        "accuracy": 0.6083333333333333,
+        "soft_cross_entropy": 0.8959426474689492,
+        "brier_sum": 0.24666588038090642,
+        "gold_mass_at_selected_option": 0.5959694433333333,
+        "ece_10_bins_vs_gold_argmax": 0.1436674030913538,
+        "score_expectation_mae": null
+      },
+      "choice": {
+        "n": 600,
+        "accuracy": 0.3,
+        "soft_cross_entropy": 1.4760749628928702,
+        "brier_sum": 0.2983915499400638,
+        "gold_mass_at_selected_option": 0.2975401032805854,
+        "ece_10_bins_vs_gold_argmax": 0.10102200421895587,
+        "score_expectation_mae": null
+      },
+      "score": {
+        "n": 800,
+        "accuracy": 0.28625,
+        "soft_cross_entropy": 1.4252979116600324,
+        "brier_sum": 0.23534606907211966,
+        "gold_mass_at_selected_option": 0.2927458662754106,
+        "ece_10_bins_vs_gold_argmax": 0.08818737638552236,
+        "score_expectation_mae": 0.7062007060183633
+      }
+    },
+    "by_workflow": {
+      "agent_trace_observability": {
+        "n": 500,
+        "accuracy": 0.322,
+        "soft_cross_entropy": 1.3077626169298469,
+        "brier_sum": 0.2160178604021963,
+        "gold_mass_at_selected_option": 0.34093333788001157,
+        "ece_10_bins_vs_gold_argmax": 0.1460671670859377,
+        "score_expectation_mae": 0.7486219669320258
+      },
+      "customer_service": {
+        "n": 500,
+        "accuracy": 0.33,
+        "soft_cross_entropy": 1.3061049956055322,
+        "brier_sum": 0.2928332122478796,
+        "gold_mass_at_selected_option": 0.3333450687106905,
+        "ece_10_bins_vs_gold_argmax": 0.06456309097500508,
+        "score_expectation_mae": 0.64027396877692
+      },
+      "invoice_processing": {
+        "n": 500,
+        "accuracy": 0.536,
+        "soft_cross_entropy": 1.0712695748836667,
+        "brier_sum": 0.28116067304622494,
+        "gold_mass_at_selected_option": 0.5081731067333175,
+        "ece_10_bins_vs_gold_argmax": 0.08496225072633658,
+        "score_expectation_mae": 0.7626181060369467
+      },
+      "security_incidents": {
+        "n": 500,
+        "accuracy": 0.36,
+        "soft_cross_entropy": 1.4417606036711896,
+        "brier_sum": 0.24061088120425483,
+        "gold_mass_at_selected_option": 0.3581533286533399,
+        "ece_10_bins_vs_gold_argmax": 0.18970326059668705,
+        "score_expectation_mae": 0.6732887823275605
+      }
+    }
+  },
+  "trained": {
+    "overall": {
+      "n": 2000,
+      "accuracy": 0.7925,
+      "soft_cross_entropy": 0.8506353397760172,
+      "brier_sum": 0.04538089928738838,
+      "gold_mass_at_selected_option": 0.6141518830431357,
+      "ece_10_bins_vs_gold_argmax": 0.15728376401053454,
+      "score_expectation_mae": 0.20867327500810304
+    },
+    "by_type": {
+      "boolean": {
+        "n": 600,
+        "accuracy": 0.8883333333333333,
+        "soft_cross_entropy": 0.4938911501806257,
+        "brier_sum": 0.03010576036266077,
+        "gold_mass_at_selected_option": 0.7530472166666667,
+        "ece_10_bins_vs_gold_argmax": 0.13451652157871452,
+        "score_expectation_mae": null
+      },
+      "choice": {
+        "n": 600,
+        "accuracy": 0.7533333333333333,
+        "soft_cross_entropy": 0.977886827984796,
+        "brier_sum": 0.05952916614590613,
+        "gold_mass_at_selected_option": 0.574607045612877,
+        "ece_10_bins_vs_gold_argmax": 0.15015230922222592,
+        "score_expectation_mae": null
+      },
+      "score": {
+        "n": 800,
+        "accuracy": 0.75,
+        "soft_cross_entropy": 1.0227548658159769,
+        "brier_sum": 0.04622605333704577,
+        "gold_mass_at_selected_option": 0.5396390108981817,
+        "ece_10_bins_vs_gold_argmax": 0.17970778692563105,
+        "score_expectation_mae": 0.20867327500810304
+      }
+    },
+    "by_workflow": {
+      "agent_trace_observability": {
+        "n": 500,
+        "accuracy": 0.718,
+        "soft_cross_entropy": 0.9692638875281991,
+        "brier_sum": 0.054727788044825615,
+        "gold_mass_at_selected_option": 0.5383866713400591,
+        "ece_10_bins_vs_gold_argmax": 0.15080190032311108,
+        "score_expectation_mae": 0.2074268519634121
+      },
+      "customer_service": {
+        "n": 500,
+        "accuracy": 0.822,
+        "soft_cross_entropy": 0.8317855544960114,
+        "brier_sum": 0.04761248541128411,
+        "gold_mass_at_selected_option": 0.6423307380361074,
+        "ece_10_bins_vs_gold_argmax": 0.17300777546964388,
+        "score_expectation_mae": 0.1879357272672015
+      },
+      "invoice_processing": {
+        "n": 500,
+        "accuracy": 0.862,
+        "soft_cross_entropy": 0.6531605850106125,
+        "brier_sum": 0.040080685952243886,
+        "gold_mass_at_selected_option": 0.7282134560529919,
+        "ece_10_bins_vs_gold_argmax": 0.12757753357650928,
+        "score_expectation_mae": 0.20884729718646483
+      },
+      "security_incidents": {
+        "n": 500,
+        "accuracy": 0.768,
+        "soft_cross_entropy": 0.9483313320692458,
+        "brier_sum": 0.039102637741199923,
+        "gold_mass_at_selected_option": 0.5476766667433847,
+        "ece_10_bins_vs_gold_argmax": 0.18259973722073927,
+        "score_expectation_mae": 0.2304832236153338
+      }
+    }
+  },
+  "trained_calibrated": {
+    "overall": {
+      "n": 2000,
+      "accuracy": 0.7925,
+      "soft_cross_entropy": 0.8494257240729101,
+      "brier_sum": 0.04482128393998691,
+      "gold_mass_at_selected_option": 0.6141518830431357,
+      "ece_10_bins_vs_gold_argmax": 0.16873319504085882,
+      "score_expectation_mae": 0.20955441946218833
+    },
+    "by_type": {
+      "boolean": {
+        "n": 600,
+        "accuracy": 0.8883333333333333,
+        "soft_cross_entropy": 0.49345617881762127,
+        "brier_sum": 0.02998854257860554,
+        "gold_mass_at_selected_option": 0.7530472166666667,
+        "ece_10_bins_vs_gold_argmax": 0.14374527963881778,
+        "score_expectation_mae": null
+      },
+      "choice": {
+        "n": 600,
+        "accuracy": 0.7533333333333333,
+        "soft_cross_entropy": 0.9767044683424941,
+        "brier_sum": 0.05893658091452487,
+        "gold_mass_at_selected_option": 0.574607045612877,
+        "ece_10_bins_vs_gold_argmax": 0.15833101994005583,
+        "score_expectation_mae": null
+      },
+      "score": {
+        "n": 800,
+        "accuracy": 0.75,
+        "soft_cross_entropy": 1.0209438248121885,
+        "brier_sum": 0.04535936723011947,
+        "gold_mass_at_selected_option": 0.5396390108981817,
+        "ece_10_bins_vs_gold_argmax": 0.19527576291799167,
+        "score_expectation_mae": 0.20955441946218833
+      }
+    },
+    "by_workflow": {
+      "agent_trace_observability": {
+        "n": 500,
+        "accuracy": 0.718,
+        "soft_cross_entropy": 0.9685038823330769,
+        "brier_sum": 0.054055258817120456,
+        "gold_mass_at_selected_option": 0.5383866713400591,
+        "ece_10_bins_vs_gold_argmax": 0.16139032998017697,
+        "score_expectation_mae": 0.2064539018767212
+      },
+      "customer_service": {
+        "n": 500,
+        "accuracy": 0.822,
+        "soft_cross_entropy": 0.8309235213942799,
+        "brier_sum": 0.04756562805745092,
+        "gold_mass_at_selected_option": 0.6423307380361074,
+        "ece_10_bins_vs_gold_argmax": 0.18587593979683686,
+        "score_expectation_mae": 0.19036120091664785
+      },
+      "invoice_processing": {
+        "n": 500,
+        "accuracy": 0.862,
+        "soft_cross_entropy": 0.6527462996567511,
+        "brier_sum": 0.0399996045610005,
+        "gold_mass_at_selected_option": 0.7282134560529919,
+        "ece_10_bins_vs_gold_argmax": 0.13914747979604886,
+        "score_expectation_mae": 0.21680871470007518
+      },
+      "security_incidents": {
+        "n": 500,
+        "accuracy": 0.768,
+        "soft_cross_entropy": 0.9455291929075319,
+        "brier_sum": 0.03766464432437578,
+        "gold_mass_at_selected_option": 0.5476766667433847,
+        "ece_10_bins_vs_gold_argmax": 0.19229345289099728,
+        "score_expectation_mae": 0.22459386035530918
+      }
+    }
+  },
+  "temperatures": {
+    "boolean": {
+      "temperature": 1.0717734625362931,
+      "calibration_n": 180,
+      "soft_cross_entropy": 0.5016219853952194
+    },
+    "choice": {
+      "temperature": 1.0352649238413776,
+      "calibration_n": 180,
+      "soft_cross_entropy": 0.9665763270611772
+    },
+    "score": {
+      "temperature": 1.0717734625362931,
+      "calibration_n": 240,
+      "soft_cross_entropy": 1.0154548251593185
+    }
+  },
+  "limitation": "Agreement with public teacher labels; not actual agent task success."
+}

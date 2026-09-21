@@ -1,0 +1,235 @@
+{
+  "_id": "6aaa4864f37373a4ce11d91a",
+  "id": "LocalLLaMA/typed-decisions",
+  "author": "LocalLLaMA",
+  "sha": "ea9306458d6e9563628369a3d1e72e362fb381d2",
+  "lastModified": "2026-09-18T03:24:21.000Z",
+  "private": false,
+  "gated": false,
+  "disabled": false,
+  "tags": [
+    "task_categories:text-classification",
+    "language:en",
+    "license:apache-2.0",
+    "size_categories:1K<n<10K",
+    "format:parquet",
+    "modality:tabular",
+    "modality:text",
+    "library:datasets",
+    "library:pandas",
+    "library:polars",
+    "library:mlcroissant",
+    "region:us",
+    "structured-decisions",
+    "calibration",
+    "probabilistic-classification",
+    "system-one",
+    "workflow-evaluation",
+    "synthetic"
+  ],
+  "description": "\n\t\n\t\t\n\t\n\t\n\t\tTyped Decisions\n\t\n\nA benchmark for typed probabilistic decisions over shared state. You give a\nmodel one piece of unstructured state. It answers several typed questions about\nthat state at once, and every answer is a probability distribution rather than a\nsingle label.\nThe schema follows the System One primitives used by\nTypeSafe AI: noul, choice and score. A row replays against any API that implements that shape. This benchmark is\nindependent. It is not affiliated with TypeSafe\u2026 See the full description on the dataset page: https://huggingface.co/datasets/LocalLLaMA/typed-decisions.",
+  "downloads": 2599,
+  "likes": 11,
+  "cardData": {
+    "license": "apache-2.0",
+    "language": [
+      "en"
+    ],
+    "pretty_name": "Typed Decisions",
+    "size_categories": [
+      "n<1K"
+    ],
+    "task_categories": [
+      "text-classification"
+    ],
+    "tags": [
+      "structured-decisions",
+      "calibration",
+      "probabilistic-classification",
+      "system-one",
+      "workflow-evaluation",
+      "synthetic"
+    ],
+    "configs": [
+      {
+        "config_name": "agent_trace_observability",
+        "data_files": [
+          {
+            "split": "train",
+            "path": "agent_trace_observability/train-*.parquet"
+          },
+          {
+            "split": "test",
+            "path": "agent_trace_observability/test-*.parquet"
+          }
+        ]
+      },
+      {
+        "config_name": "customer_service",
+        "data_files": [
+          {
+            "split": "train",
+            "path": "customer_service/train-*.parquet"
+          },
+          {
+            "split": "test",
+            "path": "customer_service/test-*.parquet"
+          }
+        ]
+      },
+      {
+        "config_name": "invoice_processing",
+        "data_files": [
+          {
+            "split": "train",
+            "path": "invoice_processing/train-*.parquet"
+          },
+          {
+            "split": "test",
+            "path": "invoice_processing/test-*.parquet"
+          }
+        ]
+      },
+      {
+        "config_name": "security_incidents",
+        "data_files": [
+          {
+            "split": "train",
+            "path": "security_incidents/train-*.parquet"
+          },
+          {
+            "split": "test",
+            "path": "security_incidents/test-*.parquet"
+          }
+        ]
+      },
+      {
+        "config_name": "all",
+        "data_files": [
+          {
+            "split": "train",
+            "path": "all/train-*.parquet"
+          },
+          {
+            "split": "test",
+            "path": "all/test-*.parquet"
+          }
+        ]
+      }
+    ]
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes",
+      "blobId": "bed0738c7eeb449bca98b5d2f33c89a1ee56349a",
+      "size": 2504
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "0d440e6fcd41bc4768d39c1174f6a1da0d5532df",
+      "size": 14053
+    },
+    {
+      "rfilename": "agent_trace_observability/test-00000-of-00001.parquet",
+      "blobId": "e18b78a0f81ed8f5cac35f812ae72e26ed699f2b",
+      "size": 71362,
+      "lfs": {
+        "sha256": "833ad1364237b9a3fe05be2c62e632f0cb34ba372284b975140d362ab246f70d",
+        "size": 71362,
+        "pointerSize": 130
+      }
+    },
+    {
+      "rfilename": "agent_trace_observability/train-00000-of-00001.parquet",
+      "blobId": "2d6390bf30a403a78c9907ead3237ad7eb3a6c37",
+      "size": 157731,
+      "lfs": {
+        "sha256": "e7b2f78fe539517c6a66a90c68ed671c6133194a88d27dbff5d84713af46b901",
+        "size": 157731,
+        "pointerSize": 131
+      }
+    },
+    {
+      "rfilename": "all/test-00000-of-00001.parquet",
+      "blobId": "ccce2a8586870ced29aa1452ad3b761a181d70ec",
+      "size": 222140,
+      "lfs": {
+        "sha256": "4f294f218ea1da27f3efef936359389c62ea4d3973a41457732990f1d31b647c",
+        "size": 222140,
+        "pointerSize": 131
+      }
+    },
+    {
+      "rfilename": "all/train-00000-of-00001.parquet",
+      "blobId": "c989b6f2b2a2c77ae66b50a639bcd57cf2bfb7e8",
+      "size": 598824,
+      "lfs": {
+        "sha256": "46a58d63edfd86e23229c78afe8b72307bb4ca9fb0e8df180cabb3c67ec9dcd5",
+        "size": 598824,
+        "pointerSize": 131
+      }
+    },
+    {
+      "rfilename": "customer_service/test-00000-of-00001.parquet",
+      "blobId": "675828b521fda547f8bb0a137ff289a78ee65b33",
+      "size": 115037,
+      "lfs": {
+        "sha256": "b4e6e23b3c2add197dda74008f2ce42ff996511ff1bf9c93e8b0e6d84ac9c275",
+        "size": 115037,
+        "pointerSize": 131
+      }
+    },
+    {
+      "rfilename": "customer_service/train-00000-of-00001.parquet",
+      "blobId": "1db8eec1a30ce36632042a120ddbff93b7890429",
+      "size": 267280,
+      "lfs": {
+        "sha256": "3e3abc2a9307bc641f60a6f9042627897ca01c145c3206211dfa9c926ba8721c",
+        "size": 267280,
+        "pointerSize": 131
+      }
+    },
+    {
+      "rfilename": "invoice_processing/test-00000-of-00001.parquet",
+      "blobId": "3dd8098074b94d1caf389e6ae557a2b1d0905f82",
+      "size": 79603,
+      "lfs": {
+        "sha256": "ce2adfb5201dba910b23bda6ab9678c385b580edaabbf8348b4e024c120d4b75",
+        "size": 79603,
+        "pointerSize": 130
+      }
+    },
+    {
+      "rfilename": "invoice_processing/train-00000-of-00001.parquet",
+      "blobId": "a88ffcf352bab4a76183c8236948fb30146bb1f9",
+      "size": 177403,
+      "lfs": {
+        "sha256": "6a5cfcd12e77e707cd9861107868a5adbb7df566ced3162bb9472cd3e348a598",
+        "size": 177403,
+        "pointerSize": 131
+      }
+    },
+    {
+      "rfilename": "security_incidents/test-00000-of-00001.parquet",
+      "blobId": "e957c9704d84887f882fe377ff8a932e796c6491",
+      "size": 87929,
+      "lfs": {
+        "sha256": "4d8bc1879a0b67e5d275edea21a694b06136ca2a2c3355215a7d8adea6b0c75f",
+        "size": 87929,
+        "pointerSize": 130
+      }
+    },
+    {
+      "rfilename": "security_incidents/train-00000-of-00001.parquet",
+      "blobId": "c0238b1d8cb7807c9eb454153141ebd369b52ea7",
+      "size": 201079,
+      "lfs": {
+        "sha256": "3aae379ac25fc6434d5f5675f04b06f4310d1aac3056a0e30bb0f779aa2f0a99",
+        "size": 201079,
+        "pointerSize": 131
+      }
+    }
+  ],
+  "createdAt": "2026-09-16T07:42:28.000Z",
+  "usedStorage": 3152961
+}

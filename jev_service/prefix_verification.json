@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "checkpoint_sha256": "38a8feb95b5078cd4c2b03d04907bdf4fddbb7a45b07d2cd5437baabf12c15ab",
+  "median_wall_ms": {
+    "path": 609.65,
+    "shared": 348.56,
+    "auto": 298.91
+  },
+  "speedup_auto_vs_path": 2.0395771302398713,
+  "max_probability_error": {
+    "shared": 0.0005083438009023666,
+    "auto": 0.0005083438009023666
+  },
+  "original_model_max_probability_error": 0.0,
+  "usage": {
+    "path": {
+      "questions": 2,
+      "candidate_paths": 66,
+      "input_path_tokens": 33547,
+      "generated_tokens": 0,
+      "truncated_inputs": 0,
+      "backbone_input_tokens": 33547,
+      "shared_prefix_questions": 0,
+      "wall_ms": 609.36
+    },
+    "shared": {
+      "questions": 2,
+      "candidate_paths": 66,
+      "input_path_tokens": 33547,
+      "generated_tokens": 0,
+      "truncated_inputs": 0,
+      "backbone_input_tokens": 2058,
+      "shared_prefix_questions": 2,
+      "wall_ms": 348.56
+    },
+    "auto": {
+      "questions": 2,
+      "candidate_paths": 66,
+      "input_path_tokens": 33547,
+      "generated_tokens": 0,
+      "truncated_inputs": 0,
+      "backbone_input_tokens": 2551,
+      "shared_prefix_questions": 1,
+      "wall_ms": 298.45
+    }
+  },
+  "scope": "Single synthetic long-context workload; throughput result, not decision-quality improvement"
+}

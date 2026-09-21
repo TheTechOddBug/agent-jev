@@ -1,0 +1,17 @@
+{
+  "boolean": {
+    "temperature": 1.0717734625362931,
+    "calibration_n": 180,
+    "soft_cross_entropy": 0.5016219853952194
+  },
+  "choice": {
+    "temperature": 1.0352649238413776,
+    "calibration_n": 180,
+    "soft_cross_entropy": 0.9665763270611772
+  },
+  "score": {
+    "temperature": 1.0717734625362931,
+    "calibration_n": 240,
+    "soft_cross_entropy": 1.0154548251593185
+  }
+}

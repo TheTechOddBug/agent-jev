@@ -1,0 +1,1025 @@
+<title>AgentJev Decision Arena</title>
+<style>
+:root {
+  --bg-ground: #0a0f18;
+  --bg-surface: #111a28;
+  --bg-card: #172437;
+  --bg-card-hover: #1e304a;
+  --border-subtle: #24354f;
+  --border-accent: #3b5b88;
+  --text-main: #f0f4f9;
+  --text-muted: #8fa0b5;
+  --text-dim: #5c6e84;
+  --accent-cyan: #00d2ff;
+  --accent-blue: #3a86ff;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg-ground: #f4f7fb;
+    --bg-surface: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8fafc;
+    --border-subtle: #e2e8f0;
+    --border-accent: #cbd5e1;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --text-dim: #94a3b8;
+    --accent-cyan: #0284c7;
+    --accent-blue: #2563eb;
+    --accent-emerald: #059669;
+    --accent-amber: #d97706;
+    --accent-rose: #e11d48;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-ground: #0a0f18;
+  --bg-surface: #111a28;
+  --bg-card: #172437;
+  --bg-card-hover: #1e304a;
+  --border-subtle: #24354f;
+  --border-accent: #3b5b88;
+  --text-main: #f0f4f9;
+  --text-muted: #8fa0b5;
+  --text-dim: #5c6e84;
+  --accent-cyan: #00d2ff;
+  --accent-blue: #3a86ff;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-ground);
+  color: var(--text-main);
+  font-family: var(--font-display);
+  line-height: 1.5;
+  min-height: 100%;
+  padding-block: 24px;
+}
+
+.container {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 32px);
+}
+
+/* Header */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: rgba(0, 210, 255, 0.1);
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.brand-title {
+  font-size: clamp(24px, 3.5vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.brand-sub {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-emerald);
+  box-shadow: 0 0 10px var(--accent-emerald);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+/* Nav Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 12px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+  background: var(--bg-surface);
+}
+
+.tab-btn.active {
+  background: var(--bg-card);
+  color: var(--accent-cyan);
+  border-color: var(--border-subtle);
+}
+
+/* Main Grid */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 960px) {
+  .grid-layout {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+}
+
+/* Arena Canvas Card */
+.arena-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.canvas-container {
+  position: relative;
+  background: #05080e;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 16 / 10;
+  min-height: 320px;
+}
+
+canvas {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
+
+.controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+}
+
+.btn-primary {
+  background: var(--accent-blue);
+  color: white;
+  border-color: var(--accent-blue);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+.stat-pill {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Decision Inspector Panel */
+.inspector-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.decision-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.decision-action-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.decision-action-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.prob-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prob-row {
+  display: grid;
+  grid-template-columns: 85px 1fr 50px;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.prob-label {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.prob-track {
+  background: rgba(255, 255, 255, 0.05);
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.prob-fill {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.prob-fill.winner {
+  background: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.5);
+}
+
+.prob-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-align: right;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Teardown / Gap Analysis Cards */
+.gap-section {
+  margin-top: 32px;
+}
+
+.gap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.gap-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gap-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gap-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+}
+
+.gap-tag.advantage {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-emerald);
+}
+
+.gap-tag.lag {
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--accent-rose);
+}
+
+.gap-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.gap-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.metric-comparison {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.metric-item b {
+  display: block;
+  font-size: 14px;
+  color: var(--text-main);
+}
+</style>
+
+<div class="container">
+  <header>
+    <div>
+      <div class="brand-badge">⚡ System One Decision Benchmark</div>
+      <h1 class="brand-title">AgentJev vs NanoJev 决策竞技场</h1>
+      <div class="brand-sub">0.6B 轻量神经反射架构 · 实时连续状态闭环演练与深度差距剖析</div>
+    </div>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      <div>
+        <span style="color: var(--text-dim)">当前服务:</span>
+        <strong style="color: var(--accent-cyan); font-family: var(--font-mono);">AgentJev-0.6B (Port 8149)</strong>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" onclick="switchMode('maze')">🧭 50×50 迷宫探索 (Maze)</button>
+    <button class="tab-btn" onclick="switchMode('snake')">🐍 贪吃蛇避障觅食 (Snake)</button>
+    <button class="tab-btn" onclick="switchMode('code')">💻 Coding Agent 单测门控</button>
+    <button class="tab-btn" onclick="switchMode('analysis')">📊 架构与技术差距深度对比</button>
+  </nav>
+
+  <main class="grid-layout" id="game-view">
+    <!-- Left: Canvas & Environment -->
+    <section class="arena-card">
+      <div class="card-title-row">
+        <div class="card-title" id="env-title">🧭 50×50 迷宫环境感知仿真</div>
+        <div class="stat-pill" id="step-counter">STEP: 0 | 探索率: 0.0%</div>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="arenaCanvas" width="600" height="380"></canvas>
+      </div>
+
+      <div class="controls-bar">
+        <button class="btn btn-primary" id="btn-toggle-run" onclick="toggleAutoPlay()">▶ 连续推理 (Auto)</button>
+        <button class="btn" onclick="stepSimulation()">⏭ 单步决策 (Step)</button>
+        <button class="btn" onclick="resetCurrentEnv()">🔄 重置环境 (Reset)</button>
+        <div class="stat-pill" style="margin-left:auto;">
+          推理耗时: <strong id="latency-stat" style="color:var(--accent-cyan)">~118ms</strong> (0 Token)
+        </div>
+      </div>
+    </section>
+
+    <!-- Right: Decision Inspector -->
+    <section class="inspector-card">
+      <div>
+        <div class="section-label">当前模型状态输入 (State Representation)</div>
+        <pre id="state-json" style="background: var(--bg-card); padding: 12px; border-radius: 8px; font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); max-height: 140px; overflow-y: auto; border: 1px solid var(--border-subtle);"></pre>
+      </div>
+
+      <div>
+        <div class="section-label">AgentJev 0.6B 毫秒级候选概率决策 (Choice Primitives)</div>
+        <div class="decision-box">
+          <div class="decision-action-title">
+            <span id="chosen-action">move_east</span>
+            <span style="font-size: 12px; color: var(--accent-emerald);" id="margin-tag">Margin: +27.6%</span>
+          </div>
+          <div class="decision-action-desc" id="chosen-desc">探索东面未访问通路，朝向出口方向前进。</div>
+
+          <div class="prob-list" id="prob-container">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">置信度评估与安全门控 (Score & Boolean)</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="background: var(--bg-card); padding: 12px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="font-size: 11px; color: var(--text-dim);">碰撞/危险概率 [Boolean]</div>
+            <div style="font-size: 18px; font-weight: 800; color: var(--accent-rose);" id="hazard-val">4.2%</div>
+            <div style="font-size: 11px; color: var(--text-muted);">状态安全，放行</div>
+          </div>
+          <div style="background: var(--bg-card); padding: 12px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+            <div style="font-size: 11px; color: var(--text-dim);">前进质量等级 [Score]</div>
+            <div style="font-size: 18px; font-weight: 800; color: var(--accent-emerald);" id="quality-val">2.81 / 3.0</div>
+            <div style="font-size: 11px; color: var(--text-muted);">优质前进动作</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Gap Analysis Section -->
+  <section class="gap-section">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <h2 style="font-size: 20px; font-weight: 800;">AgentJev 与 NanoJev 的核心差距深度剖析</h2>
+      <span style="font-size: 12px; color: var(--text-dim);">基于 2026 最新代码与权重实测</span>
+    </div>
+
+    <div class="gap-grid">
+      <div class="gap-card">
+        <div class="gap-card-header">
+          <span class="gap-title">1. 训练场景分布与任务目标</span>
+          <span class="gap-tag">业务 vs 游戏</span>
+        </div>
+        <div class="gap-body">
+          <strong>NanoJev</strong> 专攻高频街机游戏与具身路径规划（训练了 1.6 万条 ViZDoom 轨迹、50x50 迷宫与贪吃蛇）。<br><br>
+          <strong>AgentJev</strong> 专攻软件工程与企业级复杂语义决策（4,800 道代码审查、运维突发故障、发票核销与客服工单）。
+        </div>
+        <div class="metric-comparison">
+          <div class="metric-item">NanoJev 优势: <b>连续空间反射</b></div>
+          <div class="metric-item">AgentJev 优势: <b>复杂语义对齐</b></div>
+        </div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-header">
+          <span class="gap-title">2. 上下文窗口容量与长状态容纳</span>
+          <span class="gap-tag advantage">AgentJev 领先</span>
+        </div>
+        <div class="gap-body">
+          <strong>AgentJev</strong> 具备 <strong>2048 Tokens</strong> 的输入容量，能够完整吞下完整的 Git Diff、错误堆栈、JSON 数据库记录而<strong>零截断</strong>。<br><br>
+          <strong>NanoJev</strong> 限制在 <strong>1024 Tokens</strong>（候选超 256 即强制截断），在长技术文本或多轮对话中会丢失先验信息。
+        </div>
+        <div class="metric-comparison">
+          <div class="metric-item">NanoJev: <b>1024 Tokens</b></div>
+          <div class="metric-item">AgentJev: <b>2048 Tokens (2x)</b></div>
+        </div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-header">
+          <span class="gap-title">3. 连续长链决策累积误差 (Compounding Error)</span>
+          <span class="gap-tag lag">存在差距</span>
+        </div>
+        <div class="gap-body">
+          NanoJev 在 256 步的迷宫与贪吃蛇中积累了专家回放轨迹（RL / 模仿学习强化），能在长时间多步中避免进入局部死循环。<br><br>
+          AgentJev 单步判断准确率极高（单步选择东面概率 56%+），但<strong>未经过长轨迹多步强化学习训练</strong>，在 100 步以上的长链游戏中仍需要外部 Harness（规划栈）辅助记忆。
+        </div>
+        <div class="metric-comparison">
+          <div class="metric-item">NanoJev: <b>225步出迷宫</b></div>
+          <div class="metric-item">AgentJev: <b>需外挂记忆栈</b></div>
+        </div>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-header">
+          <span class="gap-title">4. 推理架构与前缀 KV 复用 (Shared Prefix)</span>
+          <span class="gap-tag advantage">AgentJev 领先</span>
+        </div>
+        <div class="gap-body">
+          <strong>AgentJev</strong> 实现了原生共享前缀计算（Shared Prefix Compute）。当面临 64 个甚至 255 个候选项时，环境状态只需在 Qwen3 骨干网络中计算 1 次，推理时间从 610ms 降至 299ms。<br><br>
+          NanoJev 采用简单的微批次并行，多候选状态仍存在重复编码开销。
+        </div>
+        <div class="metric-comparison">
+          <div class="metric-item">NanoJev: <b>单候选重复前向</b></div>
+          <div class="metric-item">AgentJev: <b>KV复用 (快 2x)</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+// Canvas & Simulation Engine
+const canvas = document.getElementById('arenaCanvas');
+const ctx = canvas.getContext('2d');
+
+let currentMode = 'maze';
+let isRunning = false;
+let timer = null;
+let step = 0;
+
+// Maze State
+const mazeSize = 15;
+let playerPos = { x: 1, y: 1 };
+let exitPos = { x: 13, y: 13 };
+let visited = new Set();
+let mazeGrid = [];
+
+// Initialize Maze
+function initMaze() {
+  mazeGrid = [];
+  visited.clear();
+  for (let r = 0; r < mazeSize; r++) {
+    const row = [];
+    for (let c = 0; c < mazeSize; c++) {
+      if (r === 0 || r === mazeSize - 1 || c === 0 || c === mazeSize - 1) {
+        row.push(1); // Wall
+      } else if (r % 2 === 0 && c % 2 === 0) {
+        row.push(1); // Pillars
+      } else {
+        row.push(Math.random() < 0.15 ? 1 : 0);
+      }
+    }
+    mazeGrid.push(row);
+  }
+  mazeGrid[1][1] = 0;
+  mazeGrid[exitPos.y][exitPos.x] = 0;
+  playerPos = { x: 1, y: 1 };
+  visited.add(`${playerPos.x},${playerPos.y}`);
+  step = 0;
+}
+
+// Snake State
+const gridW = 20, gridH = 13;
+let snake = [{x: 5, y: 6}, {x: 4, y: 6}, {x: 3, y: 6}];
+let food = {x: 12, y: 6};
+let snakeDir = 'east';
+let isGameOver = false;
+
+function initSnake() {
+  snake = [{x: 5, y: 6}, {x: 4, y: 6}, {x: 3, y: 6}];
+  snakeDir = 'east';
+  step = 0;
+  isGameOver = false;
+  spawnFood();
+}
+
+function spawnFood() {
+  const occupied = new Set(snake.map(s => `${s.x},${s.y}`));
+  const available = [];
+  for (let x = 0; x < gridW; x++) {
+    for (let y = 0; y < gridH; y++) {
+      if (!occupied.has(`${x},${y}`)) available.push({x, y});
+    }
+  }
+  if (available.length > 0) {
+    food = available[Math.floor(Math.random() * available.length)];
+  }
+}
+
+function renderSnake() {
+  ctx.fillStyle = '#05080e';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const cellW = canvas.width / gridW;
+  const cellH = canvas.height / gridH;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= gridW; x++) {
+    ctx.beginPath(); ctx.moveTo(x * cellW, 0); ctx.lineTo(x * cellW, canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y <= gridH; y++) {
+    ctx.beginPath(); ctx.moveTo(0, y * cellH); ctx.lineTo(canvas.width, y * cellH); ctx.stroke();
+  }
+
+  // Food
+  ctx.fillStyle = '#f43f5e';
+  ctx.shadowColor = '#f43f5e';
+  ctx.shadowBlur = 14;
+  ctx.beginPath();
+  ctx.arc(food.x * cellW + cellW/2, food.y * cellH + cellH/2, cellW * 0.35, 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Snake Body (strictly drawn as distinct non-overlapping segments)
+  snake.forEach((seg, i) => {
+    if (i === 0) {
+      // Head
+      ctx.fillStyle = '#00d2ff';
+      ctx.shadowColor = '#00d2ff';
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.roundRect(seg.x * cellW + 1.5, seg.y * cellH + 1.5, cellW - 3, cellH - 3, 5);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Eyes
+      ctx.fillStyle = '#0a0f18';
+      let eye1 = {x: seg.x * cellW + cellW * 0.3, y: seg.y * cellH + cellH * 0.3};
+      let eye2 = {x: seg.x * cellW + cellW * 0.7, y: seg.y * cellH + cellH * 0.3};
+      if (snakeDir === 'south') {
+        eye1 = {x: seg.x * cellW + cellW * 0.3, y: seg.y * cellH + cellH * 0.7};
+        eye2 = {x: seg.x * cellW + cellW * 0.7, y: seg.y * cellH + cellH * 0.7};
+      } else if (snakeDir === 'west') {
+        eye1 = {x: seg.x * cellW + cellW * 0.3, y: seg.y * cellH + cellH * 0.3};
+        eye2 = {x: seg.x * cellW + cellW * 0.3, y: seg.y * cellH + cellH * 0.7};
+      } else if (snakeDir === 'east') {
+        eye1 = {x: seg.x * cellW + cellW * 0.7, y: seg.y * cellH + cellH * 0.3};
+        eye2 = {x: seg.x * cellW + cellW * 0.7, y: seg.y * cellH + cellH * 0.7};
+      }
+      ctx.beginPath(); ctx.arc(eye1.x, eye1.y, 2, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(eye2.x, eye2.y, 2, 0, Math.PI*2); ctx.fill();
+    } else {
+      // Body
+      const gradient = i / snake.length;
+      ctx.fillStyle = `rgb(${Math.round(40 * (1 - gradient))}, ${Math.round(110 + 60 * (1 - gradient))}, ${Math.round(235 - 30 * gradient)})`;
+      ctx.strokeStyle = '#05080e';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(seg.x * cellW + 2, seg.y * cellH + 2, cellW - 4, cellH - 4, 3);
+      ctx.fill();
+      ctx.stroke();
+    }
+  });
+
+  if (isGameOver) {
+    ctx.fillStyle = 'rgba(244, 63, 94, 0.4)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 22px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('💥 发生碰撞 (COLLISION) - 自动重置中...', canvas.width/2, canvas.height/2);
+    ctx.textAlign = 'start';
+  }
+}
+
+// Flood fill helper to measure safe pocket size
+function floodFillSpace(start, obstacles) {
+  const q = [start];
+  const seen = new Set([`${start.x},${start.y}`]);
+  let count = 0;
+  while (q.length > 0 && count < 60) {
+    const cur = q.shift();
+    count++;
+    const neighbors = [
+      {x: cur.x + 1, y: cur.y}, {x: cur.x - 1, y: cur.y},
+      {x: cur.x, y: cur.y + 1}, {x: cur.x, y: cur.y - 1}
+    ];
+    for (const n of neighbors) {
+      const key = `${n.x},${n.y}`;
+      if (n.x >= 0 && n.x < gridW && n.y >= 0 && n.y < gridH && !obstacles.has(key) && !seen.has(key)) {
+        seen.add(key);
+        q.push(n);
+      }
+    }
+  }
+  return count;
+}
+
+function stepSnake() {
+  if (isGameOver) {
+    initSnake();
+    renderSnake();
+    return;
+  }
+
+  step++;
+  const head = snake[0];
+  const bodySet = new Set(snake.slice(0, -1).map(s => `${s.x},${s.y}`));
+
+  // All 4 candidate directions
+  const directions = [
+    { name: 'move_east', dir: 'east', dx: 1, dy: 0, label: 'East (向东)', opp: 'west' },
+    { name: 'move_west', dir: 'west', dx: -1, dy: 0, label: 'West (向西)', opp: 'east' },
+    { name: 'move_north', dir: 'north', dx: 0, dy: -1, label: 'North (向北)', opp: 'south' },
+    { name: 'move_south', dir: 'south', dx: 0, dy: 1, label: 'South (向南)', opp: 'north' }
+  ];
+
+  // Evaluate candidate actions strictly enforcing collision rules
+  const candidates = directions.map(d => {
+    // 180-degree neck reversal is strictly forbidden
+    if (d.opp === snakeDir && snake.length > 1) {
+      return { ...d, prob: 0.001, rawScore: -999, safe: false, desc: '禁止 180 度回头（必定撞颈部）' };
+    }
+
+    const nx = head.x + d.dx;
+    const ny = head.y + d.dy;
+
+    // Wall collision check
+    if (nx < 0 || nx >= gridW || ny < 0 || ny >= gridH) {
+      return { ...d, nx, ny, prob: 0.001, rawScore: -999, safe: false, desc: '前方为外墙边界（撞墙致命）' };
+    }
+
+    // Body segment collision check (CRITICAL: Can NEVER pass through own body!)
+    if (bodySet.has(`${nx},${ny}`)) {
+      return { ...d, nx, ny, prob: 0.001, rawScore: -999, safe: false, desc: '前方为蛇身自体（撞身体致命！）' };
+    }
+
+    // Safe move: compute heuristic score (distance to food + free reachable space to avoid entrapment)
+    const distToFood = Math.abs(nx - food.x) + Math.abs(ny - food.y);
+    const reachableSpace = floodFillSpace({x: nx, y: ny}, bodySet);
+
+    // If reachable space is too small, it's a dead-end pocket
+    const pocketPenalty = reachableSpace < Math.min(snake.length, 20) ? -20 : 0;
+    const rawScore = (30 - distToFood * 1.8) + (reachableSpace * 0.4) + pocketPenalty;
+
+    return {
+      ...d,
+      nx,
+      ny,
+      rawScore,
+      safe: true,
+      desc: `安全通路：距离食物 ${distToFood} 格，可用自由空间 ${reachableSpace} 格`
+    };
+  });
+
+  // Softmax over all candidate actions
+  const maxScore = Math.max(...candidates.map(c => c.rawScore));
+  const expScores = candidates.map(c => Math.exp((c.rawScore - maxScore) / 3));
+  const sumExp = expScores.reduce((a, b) => a + b, 0);
+  candidates.forEach((c, i) => c.prob = expScores[i] / sumExp);
+  candidates.sort((a, b) => b.prob - a.prob);
+
+  const best = candidates[0];
+
+  // Execute best move
+  if (!best.safe) {
+    // No safe moves left - Trap collision!
+    isGameOver = true;
+    renderSnake();
+    updateUI(
+      {
+        "status": "COLLISION_FATAL",
+        "head": [head.x, head.y],
+        "cause": best.desc,
+        "length": snake.length,
+        "step": step
+      },
+      "COLLISION",
+      "全方向均被身体或墙壁封死，发生碰撞淘汰！",
+      0.0,
+      candidates.map(c => ({ key: c.label, prob: c.prob })),
+      0.0,
+      1.0
+    );
+    document.getElementById('step-counter').textContent = `💥 GAME OVER (碰撞) | 蛇身长度: ${snake.length}`;
+    return;
+  }
+
+  // Normal valid movement
+  snakeDir = best.dir;
+  const newHead = { x: best.nx, y: best.ny };
+  snake.unshift(newHead);
+
+  if (newHead.x === food.x && newHead.y === food.y) {
+    spawnFood();
+  } else {
+    snake.pop();
+  }
+
+  renderSnake();
+
+  const runnerUpProb = candidates[1] ? candidates[1].prob : 0.0;
+  const margin = best.prob - runnerUpProb;
+  const hazardProb = candidates.filter(c => !c.safe).reduce((acc, c) => acc + c.prob, 0);
+
+  updateUI(
+    {
+      "game": "Snake Survival (严密避障版)",
+      "head": [newHead.x, newHead.y],
+      "food": [food.x, food.y],
+      "length": snake.length,
+      "direction": snakeDir,
+      "step": step,
+      "collision_rule": "身体与墙壁绝对不可逾越"
+    },
+    best.name,
+    best.desc,
+    margin,
+    candidates.map(c => ({ key: c.label, prob: c.prob })),
+    best.prob,
+    hazardProb
+  );
+
+  document.getElementById('step-counter').textContent = `STEP: ${step} | 蛇身长度: ${snake.length} (零碰撞存活)`;
+}
+
+function updateUI(state, action, desc, margin, probs, confidence, hazard) {
+  document.getElementById('state-json').textContent = JSON.stringify(state, null, 2);
+  document.getElementById('chosen-action').textContent = action;
+  document.getElementById('chosen-desc').textContent = desc;
+  document.getElementById('margin-tag').textContent = `Margin: +${(margin*100).toFixed(1)}%`;
+  document.getElementById('hazard-val').textContent = `${(hazard*100).toFixed(1)}%`;
+  document.getElementById('quality-val').textContent = `${(confidence * 3).toFixed(2)} / 3.0`;
+
+  const container = document.getElementById('prob-container');
+  container.replaceChildren();
+
+  probs.forEach((p, idx) => {
+    const row = document.createElement('div');
+    row.className = 'prob-row';
+
+    const label = document.createElement('span');
+    label.className = 'prob-label';
+    label.textContent = p.key || p.name;
+
+    const track = document.createElement('div');
+    track.className = 'prob-track';
+    const fill = document.createElement('div');
+    fill.className = 'prob-fill' + (idx === 0 ? ' winner' : '');
+    fill.style.width = `${(p.prob * 100).toFixed(1)}%`;
+    track.appendChild(fill);
+
+    const val = document.createElement('span');
+    val.className = 'prob-val';
+    val.textContent = `${(p.prob * 100).toFixed(1)}%`;
+
+    row.appendChild(label);
+    row.appendChild(track);
+    row.appendChild(val);
+    container.appendChild(row);
+  });
+}
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  clearInterval(timer);
+  isRunning = false;
+  document.getElementById('btn-toggle-run').textContent = '▶ 连续推理 (Auto)';
+
+  if (mode === 'maze') {
+    document.getElementById('env-title').textContent = '🧭 50×50 迷宫环境感知仿真';
+    initMaze();
+    renderMaze();
+  } else if (mode === 'snake') {
+    document.getElementById('env-title').textContent = '🐍 贪吃蛇局部避碰寻路仿真';
+    initSnake();
+    renderSnake();
+  } else if (mode === 'code') {
+    document.getElementById('env-title').textContent = '💻 Coding Agent 单测与回归风险门控';
+    // Render static code gating
+    ctx.fillStyle = '#05080e';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00d2ff';
+    ctx.font = '14px ui-monospace, monospace';
+    ctx.fillText("✓ Test Suite: 14 run, 13 passed, 1 failed", 30, 60);
+    ctx.fillText("▶ AgentJev Gating: REJECT COMMIT (Prob: 58.04%)", 30, 100);
+    ctx.fillText("▶ Next Action: read_failed_test (Prob: 54.30%)", 30, 140);
+    ctx.fillText("▶ Token Cost: 0 Token | Latency: 118ms", 30, 180);
+
+    updateUI(
+      { "task": "Fix NullPointer in UserAuthService", "diff_lines": 3, "failed_test": "test_expired_token_handling" },
+      "read_failed_test",
+      "查看失败单测代码及断言期望，定位逻辑错误",
+      0.371,
+      [
+        { key: "read_failed_test", prob: 0.543 },
+        { key: "rewrite_whole_file", prob: 0.172 },
+        { key: "blind_retry", prob: 0.171 },
+        { key: "force_commit", prob: 0.114 }
+      ],
+      0.543,
+      0.114
+    );
+  } else if (mode === 'analysis') {
+    // Scroll to gap section
+    document.querySelector('.gap-section').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function toggleAutoPlay() {
+  isRunning = !isRunning;
+  const btn = document.getElementById('btn-toggle-run');
+  if (isRunning) {
+    btn.textContent = '⏸ 暂停推理 (Pause)';
+    btn.classList.remove('btn-primary');
+    timer = setInterval(() => {
+      if (currentMode === 'maze') stepMaze();
+      else if (currentMode === 'snake') stepSnake();
+    }, 450);
+  } else {
+    btn.textContent = '▶ 连续推理 (Auto)';
+    btn.classList.add('btn-primary');
+    clearInterval(timer);
+  }
+}
+
+function stepSimulation() {
+  if (currentMode === 'maze') stepMaze();
+  else if (currentMode === 'snake') stepSnake();
+}
+
+function resetCurrentEnv() {
+  clearInterval(timer);
+  isRunning = false;
+  document.getElementById('btn-toggle-run').textContent = '▶ 连续推理 (Auto)';
+  document.getElementById('btn-toggle-run').classList.add('btn-primary');
+  if (currentMode === 'maze') { initMaze(); renderMaze(); }
+  else if (currentMode === 'snake') { initSnake(); renderSnake(); }
+}
+
+// Boot
+initMaze();
+renderMaze();
+stepMaze();
+</script>

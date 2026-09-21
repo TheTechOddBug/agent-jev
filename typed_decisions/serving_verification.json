@@ -1,0 +1,335 @@
+{
+  "cases": 4,
+  "questions": 20,
+  "max_probability_error": 1.0652881710093709e-07,
+  "argmax_matches": 20,
+  "response": {
+    "api_version": "agentjev.decision.v1",
+    "model": "agentjev_v1",
+    "results": [
+      {
+        "id": "agent_trace_observability_000000",
+        "answers": [
+          {
+            "id": "action",
+            "type": "choice",
+            "distribution": {
+              "continue": 0.5002272725105286,
+              "human_review": 0.13789860904216766,
+              "observe": 0.3443012237548828,
+              "stop": 0.01757289096713066
+            },
+            "value": "continue",
+            "description": "Let the agent proceed without interruption.",
+            "top_probability": 0.5002272725105286,
+            "margin": 0.15592604875564575
+          },
+          {
+            "id": "needs_review",
+            "type": "boolean",
+            "distribution": {
+              "true": 0.18942299485206604,
+              "false": 0.8105770349502563
+            },
+            "probability": 0.18942299485206604,
+            "value": false
+          },
+          {
+            "id": "outcome",
+            "type": "choice",
+            "distribution": {
+              "failure": 0.06863529235124588,
+              "harmful": 0.010804304853081703,
+              "partial": 0.26396995782852173,
+              "success": 0.656590461730957
+            },
+            "value": "success",
+            "description": "The agent completed the task correctly.",
+            "top_probability": 0.656590461730957,
+            "margin": 0.3926205039024353
+          },
+          {
+            "id": "risk",
+            "type": "score",
+            "distribution": {
+              "0": 0.3337724506855011,
+              "1": 0.5499228835105896,
+              "2": 0.09561608731746674,
+              "3": 0.02068861946463585
+            },
+            "score": 0.8032209165394306,
+            "level": 1,
+            "legend": [
+              "Benign: read-only or clearly safe actions.",
+              "Low: routine writes within scope.",
+              "Moderate: irreversible or out-of-scope actions.",
+              "High: destructive, security-relevant, or policy-violating actions."
+            ]
+          },
+          {
+            "id": "urgency",
+            "type": "score",
+            "distribution": {
+              "0": 0.5765575766563416,
+              "1": 0.3168535530567169,
+              "2": 0.09060405194759369,
+              "3": 0.015984835103154182
+            },
+            "score": 0.5460161622613668,
+            "level": 0,
+            "legend": [
+              "No time pressure; can wait indefinitely.",
+              "Routine; handle within the normal queue.",
+              "Elevated; should be handled within the same week.",
+              "Critical; requires action within the same day."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "customer_service_000000",
+        "answers": [
+          {
+            "id": "action",
+            "type": "choice",
+            "distribution": {
+              "answer_directly": 0.287284255027771,
+              "close_no_action": 0.01111153420060873,
+              "escalate_to_human": 0.21811650693416595,
+              "execute_refund": 0.0071727801114320755,
+              "request_information": 0.4763149917125702
+            },
+            "value": "request_information",
+            "description": "More detail is needed from the customer before anything can be done.",
+            "top_probability": 0.4763149917125702,
+            "margin": 0.1890307366847992
+          },
+          {
+            "id": "category",
+            "type": "choice",
+            "distribution": {
+              "account": 0.006565299816429615,
+              "billing": 0.010482143610715866,
+              "delivery": 0.9342722296714783,
+              "refund": 0.021959910169243813,
+              "technical": 0.02672031708061695
+            },
+            "value": "delivery",
+            "description": "Shipping, fulfilment or delivery of a physical item.",
+            "top_probability": 0.9342722296714783,
+            "margin": 0.9075519125908613
+          },
+          {
+            "id": "churn_risk",
+            "type": "score",
+            "distribution": {
+              "0": 0.33081746101379395,
+              "1": 0.5380841493606567,
+              "2": 0.12010318040847778,
+              "3": 0.01099514588713646
+            },
+            "score": 0.8112759478390217,
+            "level": 1,
+            "legend": [
+              "No sign of dissatisfaction.",
+              "Mild frustration, but the relationship is intact.",
+              "Clearly unhappy; repeat problems or explicit complaints.",
+              "Imminent: threatening to cancel, dispute or leave."
+            ]
+          },
+          {
+            "id": "needs_human",
+            "type": "boolean",
+            "distribution": {
+              "true": 0.3691732883453369,
+              "false": 0.6308267116546631
+            },
+            "probability": 0.3691732883453369,
+            "value": false
+          },
+          {
+            "id": "urgency",
+            "type": "score",
+            "distribution": {
+              "0": 0.05065074935555458,
+              "1": 0.5825017094612122,
+              "2": 0.3099311888217926,
+              "3": 0.05691637843847275
+            },
+            "score": 1.3731132224202156,
+            "level": 1,
+            "legend": [
+              "No time pressure; can wait indefinitely.",
+              "Routine; handle within the normal queue.",
+              "Elevated; should be handled within the same week.",
+              "Critical; requires action within the same day."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "invoice_processing_000000",
+        "answers": [
+          {
+            "id": "discrepancy_severity",
+            "type": "score",
+            "distribution": {
+              "0": 0.7000775933265686,
+              "1": 0.04625163972377777,
+              "2": 0.16322821378707886,
+              "3": 0.09044250100851059
+            },
+            "score": 0.6440355703234673,
+            "level": 0,
+            "legend": [
+              "None: everything reconciles.",
+              "Trivial: rounding or a cosmetic difference.",
+              "Moderate: a real difference worth confirming.",
+              "Material: a large or unexplained difference."
+            ]
+          },
+          {
+            "id": "disposition",
+            "type": "choice",
+            "distribution": {
+              "approve": 0.570158064365387,
+              "hold": 0.16798457503318787,
+              "manual_review": 0.23859767615795135,
+              "reject": 0.023259678855538368
+            },
+            "value": "approve",
+            "description": "Matches the order and delivery; approve for payment.",
+            "top_probability": 0.570158064365387,
+            "margin": 0.3315603882074356
+          },
+          {
+            "id": "duplicate",
+            "type": "boolean",
+            "distribution": {
+              "true": 0.03689910098910332,
+              "false": 0.9631009101867676
+            },
+            "probability": 0.03689910098910332,
+            "value": false
+          },
+          {
+            "id": "matches_order",
+            "type": "boolean",
+            "distribution": {
+              "true": 0.8099115490913391,
+              "false": 0.1900884062051773
+            },
+            "probability": 0.8099115490913391,
+            "value": true
+          },
+          {
+            "id": "urgency",
+            "type": "score",
+            "distribution": {
+              "0": 0.013321679085493088,
+              "1": 0.11357379704713821,
+              "2": 0.44158634543418884,
+              "3": 0.43151819705963135
+            },
+            "score": 2.29130107909441,
+            "level": 2,
+            "legend": [
+              "No time pressure; can wait indefinitely.",
+              "Routine; handle within the normal queue.",
+              "Elevated; should be handled within the same week.",
+              "Critical; requires action within the same day."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "security_incidents_000000",
+        "answers": [
+          {
+            "id": "credential_compromise",
+            "type": "boolean",
+            "distribution": {
+              "true": 0.6295526027679443,
+              "false": 0.3704473674297333
+            },
+            "probability": 0.6295526027679443,
+            "value": true
+          },
+          {
+            "id": "disposition",
+            "type": "choice",
+            "distribution": {
+              "close_benign": 0.0332828052341938,
+              "contain": 0.3331432640552521,
+              "investigate": 0.5461317896842957,
+              "monitor": 0.08744212985038757
+            },
+            "value": "investigate",
+            "description": "Warrants an analyst opening an investigation.",
+            "top_probability": 0.5461317896842957,
+            "margin": 0.21298852562904358
+          },
+          {
+            "id": "severity",
+            "type": "score",
+            "distribution": {
+              "0": 0.020840751007199287,
+              "1": 0.12892623245716095,
+              "2": 0.281749963760376,
+              "3": 0.46931418776512146,
+              "4": 0.09916893392801285
+            },
+            "score": 2.4970444589853287,
+            "level": 3,
+            "legend": [
+              "Negligible: no access to anything sensitive.",
+              "Low: limited access, easily reversed.",
+              "Moderate: access to internal systems or non-public data.",
+              "High: access to production, secrets or customer data.",
+              "Critical: active compromise of crown-jewel systems."
+            ]
+          },
+          {
+            "id": "true_positive",
+            "type": "boolean",
+            "distribution": {
+              "true": 0.8460109233856201,
+              "false": 0.1539890468120575
+            },
+            "probability": 0.8460109233856201,
+            "value": true
+          },
+          {
+            "id": "urgency",
+            "type": "score",
+            "distribution": {
+              "0": 0.014248529449105263,
+              "1": 0.0887899100780487,
+              "2": 0.2683863341808319,
+              "3": 0.6285752058029175
+            },
+            "score": 2.511288195848465,
+            "level": 3,
+            "legend": [
+              "No time pressure; can wait indefinitely.",
+              "Routine; handle within the normal queue.",
+              "Elevated; should be handled within the same week.",
+              "Critical; requires action within the same day."
+            ]
+          }
+        ]
+      }
+    ],
+    "usage": {
+      "questions": 20,
+      "candidate_paths": 71,
+      "input_path_tokens": 15154,
+      "generated_tokens": 0,
+      "truncated_inputs": 0,
+      "backbone_input_tokens": 15154,
+      "shared_prefix_questions": 0,
+      "wall_ms": 2861.93
+    }
+  },
+  "scope": "BF16 serving versus saved offline predictions; not additional model selection"
+}

@@ -1,0 +1,7 @@
+{
+  "best_step": 600,
+  "dev_soft_cross_entropy": 0.8145090786643086,
+  "checkpoint": "/root/agentjev/typed_decisions/agentjev_v1/best.pt",
+  "selection_completed_before_test": true,
+  "training_seconds": 841.1619654577225
+}
