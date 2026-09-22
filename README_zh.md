@@ -386,4 +386,8 @@ python test_game_suite.py
 }
 ```
 
+## 社区
+
+- [Linux.Do](https://linux.do/) — 本项目非常认可 LinuxDo 社区！
+
 Apache-2.0。见 [LICENSE](LICENSE)。

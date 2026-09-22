@@ -386,4 +386,8 @@ Serving notes that are easy to miss live in [`jev_service/README.md`](jev_servic
 }
 ```
 
+## Community
+
+- [Linux.Do](https://linux.do/) — 本项目非常认可 LinuxDo 社区！
+
 Apache-2.0. See [LICENSE](LICENSE).
