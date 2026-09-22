@@ -24,6 +24,8 @@
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#typed-decisions">结果</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#时延与吞吐">时延</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#跑起来">跑起来</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#http">HTTP</a>
@@ -149,6 +151,21 @@ Laya 已发布权重用了全部 1,200 个官方训练案例。本轮留出 120 
 标签是教师分布，里面有合成案例。在这里赢下一行，不等于拉取请求合并了、事件被遏制了、或者发票付出去了。
 
 完整数字：[`typed_decisions/comparison.json`](typed_decisions/comparison.json)、[`typed_decisions/protocol.json`](typed_decisions/protocol.json)、[`typed_decisions/REPORT_zh.md`](typed_decisions/REPORT_zh.md)。
+
+---
+
+## 时延与吞吐
+
+相对 Laya，二者的权衡很清晰：短输入单题 Laya 更小更轻；多候选负载 AgentJev 凭借共享前缀扩展性更好。
+
+| 负载条件 | Laya（421M，ModernBERT） | AgentJev（598M，Qwen3） | 差异与成因 |
+|---|---:|---:|---|
+| **测试集单案 P50**（1 段状态 5 道题） | **41.53 ms** | ~60–70 ms | 极短文本上 Laya 快约 20 ms；参数量比 Qwen3 少 1.77 亿 |
+| **测试集单案 P90**（1 段状态 5 道题） | **47.14 ms** | ~85 ms | 均处于交互式决策预算内 |
+| **多候选重负载**（64 个 Choice + 1 个 Boolean，3.3 万 token） | 约 500–600 ms *(重复前向)* | **298.91 ms** *(共享前缀)* | **AgentJev 快约 2 倍**，来自前缀 KV 复用 |
+| **上下文上限** | 1,024 tokens | **2,048 tokens** | Laya 超过 1,024 会截断或报错；AgentJev 容纳两倍状态 |
+
+Laya 的 ModernBERT 是双向编码器，没有因果前缀缝隙：64 个选项的同一问题需要对状态文本重复做 64 次前向。AgentJev 将提示前缀的 KV 缓存一次，所有候选项分支挂在同一上下文下并行打分，冗余骨干 token 计算从 33,547 降到 2,551（**减少 92.4%**）。
 
 ---
 

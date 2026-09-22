@@ -24,6 +24,8 @@
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#typed-decisions">Results</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#latency--throughput">Latency</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#run-it">Run it</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="#http">HTTP</a>
@@ -149,6 +151,21 @@ Laya's published checkpoint trained on all 1,200 official training cases. This r
 Targets are teacher distributions, including synthetic cases. Beating a row here does not mean a pull request merged, an incident was contained, or an invoice was paid.
 
 Full numbers: [`typed_decisions/comparison.json`](typed_decisions/comparison.json), [`typed_decisions/protocol.json`](typed_decisions/protocol.json), [`typed_decisions/REPORT_zh.md`](typed_decisions/REPORT_zh.md).
+
+---
+
+## Latency & throughput
+
+The trade-off against Laya is clear: Laya is smaller on single short questions; AgentJev scales under wide candidate sets.
+
+| Load | Laya (421M, ModernBERT) | AgentJev (598M, Qwen3) | Difference |
+|---|---:|---:|---|
+| **P50 case latency** (5 questions over 1 state, test split) | **41.53 ms** | ~60–70 ms | Laya is ~20 ms faster on short inputs; its encoder has 177M fewer parameters |
+| **P90 case latency** (5 questions over 1 state) | **47.14 ms** | ~85 ms | Both well within interactive response budgets |
+| **Wide candidate load** (64 Choice + 1 Boolean, 33k tokens) | ~500–600 ms *(repeated forward)* | **298.91 ms** *(shared prefix)* | **AgentJev is ~2x faster** via KV prefix reuse |
+| **Context ceiling** | 1,024 tokens | **2,048 tokens** | Laya truncates or refuses beyond 1,024; AgentJev retains twice the state |
+
+Laya's ModernBERT backbone has no causal prefix seam: each candidate in a 64-option question requires a complete forward pass over the state text. AgentJev caches the prompt prefix tokens once and scores all candidate branches against that single KV context, dropping redundant backbone token operations from 33,547 to 2,551 (**92.4% reduction**).
 
 ---
 
