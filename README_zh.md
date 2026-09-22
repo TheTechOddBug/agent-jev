@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.png" alt="AgentJev。状态进去，分布出来，不解码任何 token。2,000 道决策上 top-1 为 79.25%，解码 token 为 0，上下文 2,048，三种决策原语。" width="100%">
+  <img src="assets/hero.webp" alt="AgentJev。状态进去，分布出来，不解码任何 token。2,000 道决策上 top-1 为 79.25%，解码 token 为 0，上下文 2,048，三种决策原语。" width="100%">
 </p>
 
 <p align="center">

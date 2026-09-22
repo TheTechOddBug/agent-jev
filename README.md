@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.png" alt="AgentJev. State in. A distribution out. Nothing decoded. 79.25% top-1 on 2,000 decisions, zero tokens decoded, 2,048 token context, three typed primitives." width="100%">
+  <img src="assets/hero.webp" alt="AgentJev. State in. A distribution out. Nothing decoded. 79.25% top-1 on 2,000 decisions, zero tokens decoded, 2,048 token context, three typed primitives." width="100%">
 </p>
 
 <p align="center">
