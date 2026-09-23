@@ -124,9 +124,9 @@ flowchart LR
 相对 Laya，这份测试集上的准确率差是 **+2.25 个百分点**。按 400 个案例做 bootstrap，95% 区间 **[+0.65, +3.90]**。相对本轮的起点 phase 4，差距是 **+40.55 个百分点**，区间 **[+37.35, +43.50]**。
 
 <p align="center">
-  <img src="assets/agentjev_laya_accuracy.gif" alt="官方测试上，AgentJev 在总准确率、发票处理和客服上领先 Laya。" width="100%">
+  <img src="assets/agentjev_laya_accuracy.gif" alt="AgentJev 比 Laya 多答对 45 题，发票多 25 题，客服多 29 题。" width="100%">
   <br>
-  <sub>AgentJev 领先的两个工作流，加上 2,000 题的合计。坐标从 70% 起，差距才看得清。</sub>
+  <sub>差距按题数计。合计 1,585 对 1,540。发票 431 对 406。客服 411 对 382。</sub>
 </p>
 
 ### 按工作流
@@ -174,7 +174,7 @@ Laya 已发布权重用了全部 1,200 个官方训练案例。本轮留出 120 
 Laya 的 ModernBERT 是双向编码器，没有因果前缀缝隙：64 个选项的同一问题需要对状态文本重复做 64 次前向。AgentJev 将提示前缀的 KV 缓存一次，所有候选项分支挂在同一上下文下并行打分，冗余骨干 token 计算从 33,547 降到 2,551（**减少 92.4%**）。
 
 <p align="center">
-  <img src="assets/agentjev_laya_wide.gif" alt="64 个候选项的负载上，AgentJev 在 298.91 毫秒完成，Laya 仍落在 500 到 600 毫秒这一档。" width="100%">
+  <img src="assets/agentjev_laya_wide.gif" alt="AgentJev 在 298.91 毫秒到达终点，Laya 大约还在 500 到 600 毫秒这一档的半路上。" width="100%">
   <br>
   <sub>只比较宽候选。短的五题案例上，Laya 更小的编码器仍然更快。</sub>
 </p>

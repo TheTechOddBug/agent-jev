@@ -124,9 +124,9 @@ Rows without a soft-CE number are copied from the dataset card. They were not re
 Against Laya, on this split, the accuracy gap is **+2.25 points**. A case-level bootstrap over the 400 cases gives a 95% interval of **[+0.65, +3.90]**. Against the phase-4 weights this run started from, the gap is **+40.55 points**, interval **[+37.35, +43.50]**.
 
 <p align="center">
-  <img src="assets/agentjev_laya_accuracy.gif" alt="AgentJev ahead of Laya on overall accuracy, invoice processing, and customer service." width="100%">
+  <img src="assets/agentjev_laya_accuracy.gif" alt="AgentJev answered 45 more questions correctly than Laya overall, 25 more on invoices, and 29 more on customer service." width="100%">
   <br>
-  <sub>The two workflows where AgentJev leads, plus the 2,000-question total. The axis starts at 70% so the gap is visible.</sub>
+  <sub>The gap, counted in questions. Overall 1,585 against 1,540. Invoice 431 against 406. Customer service 411 against 382.</sub>
 </p>
 
 ### By workflow
@@ -174,7 +174,7 @@ The trade-off against Laya is clear: Laya is smaller on single short questions; 
 Laya's ModernBERT backbone has no causal prefix seam: each candidate in a 64-option question requires a complete forward pass over the state text. AgentJev caches the prompt prefix tokens once and scores all candidate branches against that single KV context, dropping redundant backbone token operations from 33,547 to 2,551 (**92.4% reduction**).
 
 <p align="center">
-  <img src="assets/agentjev_laya_wide.gif" alt="On a 64-option load, AgentJev finishes at 298.91 ms while Laya is still inside a 500 to 600 ms band." width="100%">
+  <img src="assets/agentjev_laya_wide.gif" alt="AgentJev reaches the finish at 298.91 ms. Laya is still about halfway through a 500 to 600 ms band." width="100%">
   <br>
   <sub>Wide candidate load only. On a short five-question case, Laya's smaller encoder is still the faster one.</sub>
 </p>
