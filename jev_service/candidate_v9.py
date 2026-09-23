@@ -20,7 +20,6 @@ class CandidateEngine(ValidatedEngine):
     def info(self):
         return {**super().info(),'experiment':self.experiment,'normalization':'coding-state-v1',
                 'coding_completion_accuracy':0.578,'coding_completion_recall':0.578,
-                'business_policy_accuracy':1.0,'general_agent_accuracy':1.0,
                 'invoice_processing_accuracy':0.872}
 
 
