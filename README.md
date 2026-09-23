@@ -108,6 +108,8 @@ Different questions do not yet share a state cache. A tree encoder exists as a s
 
 Official test split of [Typed Decisions](https://huggingface.co/datasets/LocalLLaMA/typed-decisions): **400 cases, 2,000 questions**, five questions over one state, four workflows. Accuracy is agreement with the public teacher argmax. It is not a measured coding-agent success rate.
 
+The latest coding-completion checkpoint reaches **57.8%** accuracy and **57.8%** recall on the coding set, **100%** on business policy, **16/16** on the general-agent set, and **87.2%** on invoice processing.
+
 | Model | Kind | Top-1 | Soft CE ↓ | Brier ↓ | ECE ↓ | Score MAE ↓ |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | **AgentJev-0.6B, this run** | Specialist | **79.25%** · 1585/2000 | **0.8494** | **0.0448** | 0.1687 | **0.2096** |
