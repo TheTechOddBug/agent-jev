@@ -158,18 +158,6 @@ Targets are teacher distributions, including synthetic cases. Beating a row here
 
 Full numbers: [`typed_decisions/comparison.json`](typed_decisions/comparison.json), [`typed_decisions/protocol.json`](typed_decisions/protocol.json), [`typed_decisions/REPORT_zh.md`](typed_decisions/REPORT_zh.md).
 
-### Post-training
-
-The same 0.6B continued after the run in the table. The continuation was 120 supervised steps, then 24 RLCD steps and 48 optimizer updates. The frozen development rule selected RLCD step 12. That checkpoint is an experimental preview. The weights behind the table are unchanged.
-
-Held-out MBPP completion judgments moved from 542/1048 (51.72%) to 606/1048 (57.82%). A correct program ranked ahead of an incorrect one on 305/524 pairs at the start and 348/524 pairs after. Three tied pairs, then five, sit outside those counts. AUROC moved from 0.5156 to 0.5895. False accepts on the negative half moved from 169/524 (32.25%) to 221/524 (42.18%).
-
-A tool-precondition set stayed at 16/16. A new business-policy set moved from 75/80 to 80/80. Both sets are small synthetic rule items.
-
-Older checks did not follow that gain. Coding boundary items went from 18/36 to 14/36. A real-patch regression stayed at 255/512, and recall on the successful patches stayed at 0. Teacher agreement on the four original workflows was 84.0% customer service, 87.2% invoice processing, 78.4% security incidents, and 73.4% agent-trace observability. Those rates are separate from the 500-question rows above.
-
-Only the MBPP training split entered the gradient. The official validation and test splits stayed out. The training code is [`typed_decisions/agent_completion_v9`](typed_decisions/agent_completion_v9).
-
 ---
 
 ## Latency & throughput
